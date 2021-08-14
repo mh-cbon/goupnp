@@ -1,10 +1,4 @@
-package main
-
-import (
-	"html/template"
-)
-
-var packageTmpl = template.Must(template.New("package").Parse(`{{$name := .Metadata.Name}}
+{{$name := .Metadata.Name}}
 // Client for UPnP Device Control Protocol {{.Metadata.OfficialName}}.
 // {{if .Metadata.DocURL}}
 // This DCP is documented in detail at: {{.Metadata.DocURL}}{{end}}
@@ -166,4 +160,3 @@ func (client *{{$srvIdent}}) {{.Name}}({{range $winargs -}}
 {{define "argstruct"}}struct {{"{"}}
 {{range .}}{{.Name}} string
 {{end}}{{"}"}}{{end}}
-`))
