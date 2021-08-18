@@ -23,20 +23,7 @@ var dcpMetadata = []DCPMetadata{
 		OfficialName: "Internet Gateway Device v2",
 		DocURL:       "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v2-Device.pdf",
 		XMLSpecURL:   "http://upnp.org/specs/gw/UPnP-gw-IGD-Testfiles-20110224.zip",
-		Hacks: []DCPHackFn{
-			func(dcp *DCP) error {
-				missingURN := "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"
-				if _, ok := dcp.ServiceTypes[missingURN]; ok {
-					return nil
-				}
-				urnParts, err := extractURNParts(missingURN, serviceURNPrefix)
-				if err != nil {
-					return err
-				}
-				dcp.ServiceTypes[missingURN] = urnParts
-				return nil
-			}, totalBytesHack,
-		},
+		Hacks:        []DCPHackFn{wanFirewallURNFix, totalBytesHack},
 	},
 	{
 		Name:         "av1",
@@ -63,6 +50,19 @@ func totalBytesHack(dcp *DCP) error {
 		}
 	}
 
+	return nil
+}
+
+func wanFirewallURNFix(dcp *DCP) error {
+	missingURN := "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"
+	if _, ok := dcp.ServiceTypes[missingURN]; ok {
+		return nil
+	}
+	urnParts, err := extractURNParts(missingURN, serviceURNPrefix)
+	if err != nil {
+		return err
+	}
+	dcp.ServiceTypes[missingURN] = urnParts
 	return nil
 }
 
