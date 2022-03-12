@@ -2,8 +2,8 @@ package main
 
 import (
 	"archive/zip"
+	"bytes"
 	"encoding/xml"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -118,26 +118,27 @@ func filexists(p string) bool {
 }
 
 type unbufferedReaderAt struct {
+	io.ReaderAt
+	err error
+
 	R io.Reader
 	N int64
 }
 
 func newUnbufferedReaderAt(r io.Reader) io.ReaderAt {
-	return &unbufferedReaderAt{R: r}
+	var out unbufferedReaderAt
+	b, err := ioutil.ReadAll(r)
+	if err != nil {
+		out.err = err
+		return &out
+	}
+	out.ReaderAt = bytes.NewReader(b)
+	return &out
 }
 
 func (u *unbufferedReaderAt) ReadAt(p []byte, off int64) (n int, err error) {
-	if off < u.N {
-		return 0, errors.New("invalid offset")
+	if u.err != nil {
+		return 0, u.err
 	}
-	diff := off - u.N
-	written, err := io.CopyN(ioutil.Discard, u.R, diff)
-	u.N += written
-	if err != nil {
-		return int(written), err
-	}
-
-	n, err = u.R.Read(p)
-	u.N += int64(n)
-	return
+	return u.ReaderAt.ReadAt(p, off)
 }

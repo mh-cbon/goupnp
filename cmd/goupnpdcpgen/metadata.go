@@ -12,11 +12,11 @@ var dcpMetadata = []DCPMetadata{
 		Name:         "internetgateway1",
 		OfficialName: "Internet Gateway Device v1",
 		Src: multiProvider{
-			upnpdotorg{
-				DocURL:     "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v1-Device.pdf",
-				XMLSpecURL: "http://upnp.org/specs/gw/UPnP-gw-IGD-TestFiles-20010921.zip",
-				Hacks:      []DCPHackFn{totalBytesHack},
-			},
+			// upnpdotorg{
+			// 	DocURL:     "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v1-Device.pdf",
+			// 	XMLSpecURL: "http://upnp.org/specs/gw/UPnP-gw-IGD-TestFiles-20010921.zip",
+			// 	Hacks:      []DCPHackFn{totalBytesHack},
+			// },
 			openconnectivitydotorg{
 				SpecsURL:       allSpecsURL,
 				DocPath:        "*/*/UPnP-gw-*v1*.pdf",
@@ -29,24 +29,24 @@ var dcpMetadata = []DCPMetadata{
 		Name:         "internetgateway2",
 		OfficialName: "Internet Gateway Device v2",
 		Src: multiProvider{
-			upnpdotorg{
-				DocURL:     "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v2-Device.pdf",
-				XMLSpecURL: "http://upnp.org/specs/gw/UPnP-gw-IGD-Testfiles-20110224.zip",
-				Hacks: []DCPHackFn{
-					func(dcp *DCP) error {
-						missingURN := "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"
-						if _, ok := dcp.ServiceTypes[missingURN]; ok {
-							return nil
-						}
-						urnParts, err := extractURNParts(missingURN, serviceURNPrefix)
-						if err != nil {
-							return err
-						}
-						dcp.ServiceTypes[missingURN] = urnParts
-						return nil
-					}, totalBytesHack,
-				},
-			},
+			// upnpdotorg{
+			// 	DocURL:     "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v2-Device.pdf",
+			// 	XMLSpecURL: "http://upnp.org/specs/gw/UPnP-gw-IGD-Testfiles-20110224.zip",
+			// 	Hacks: []DCPHackFn{
+			// 		func(dcp *DCP) error {
+			// 			missingURN := "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"
+			// 			if _, ok := dcp.ServiceTypes[missingURN]; ok {
+			// 				return nil
+			// 			}
+			// 			urnParts, err := extractURNParts(missingURN, serviceURNPrefix)
+			// 			if err != nil {
+			// 				return err
+			// 			}
+			// 			dcp.ServiceTypes[missingURN] = urnParts
+			// 			return nil
+			// 		}, totalBytesHack,
+			// 	},
+			// },
 			openconnectivitydotorg{
 				SpecsURL:       allSpecsURL,
 				DocPath:        "*/*/UPnP-gw-*v2*.pdf",
