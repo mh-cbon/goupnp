@@ -15,6 +15,7 @@ import (
 // DCP collects together information about a UPnP Device Control Protocol.
 type DCP struct {
 	Metadata     DCPMetadata
+	DocURL       string
 	DeviceTypes  map[string]*URNParts
 	ServiceTypes map[string]*URNParts
 	Services     []SCPDWithURN
@@ -28,21 +29,28 @@ func newDCP(metadata DCPMetadata) *DCP {
 	}
 }
 
-func (dcp *DCP) processZipFile(filename string) error {
-	archive, err := zip.OpenReader(filename)
-	if err != nil {
-		return fmt.Errorf("error reading zip file %q: %v", filename, err)
-	}
-	defer archive.Close()
+func (dcp *DCP) Reset() {
+	dcp.DocURL = ""
+	dcp.DeviceTypes = make(map[string]*URNParts)
+	dcp.ServiceTypes = make(map[string]*URNParts)
+}
+
+func (dcp *DCP) processZipFile(archive []*zip.File) error {
+	var f int
 	for _, deviceFile := range globFiles("*/device/*.xml", archive) {
 		if err := dcp.processDeviceFile(deviceFile); err != nil {
 			return err
 		}
+		f++
 	}
 	for _, scpdFile := range globFiles("*/service/*.xml", archive) {
 		if err := dcp.processSCPDFile(scpdFile); err != nil {
 			return err
 		}
+		f++
+	}
+	if f < 1 {
+		return fmt.Errorf("no sdcp found in %q and %q", "*/device/*.xml", "*/service/*.xml")
 	}
 	return nil
 }

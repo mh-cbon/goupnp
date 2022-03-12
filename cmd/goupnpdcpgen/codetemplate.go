@@ -6,8 +6,8 @@ import (
 
 var packageTmpl = template.Must(template.New("package").Parse(`{{$name := .Metadata.Name}}
 // Client for UPnP Device Control Protocol {{.Metadata.OfficialName}}.
-// {{if .Metadata.DocURL}}
-// This DCP is documented in detail at: {{.Metadata.DocURL}}{{end}}
+// {{if .DocURL}}
+// This DCP is documented in detail at: {{.DocURL}}{{end}}
 //
 // Typically, use one of the New* functions to create clients for services.
 package {{$name}}

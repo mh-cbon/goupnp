@@ -4,45 +4,78 @@ package main
 type DCPMetadata struct {
 	Name         string // What to name the Go DCP package.
 	OfficialName string // Official name for the DCP.
-	DocURL       string // Optional - URL for further documentation about the DCP.
-	XMLSpecURL   string // Where to download the XML spec from.
-	// Any special-case functions to run against the DCP before writing it out.
-	Hacks []DCPHackFn
+	Src          dcpProvider
 }
 
 var dcpMetadata = []DCPMetadata{
 	{
 		Name:         "internetgateway1",
 		OfficialName: "Internet Gateway Device v1",
-		DocURL:       "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v1-Device.pdf",
-		XMLSpecURL:   "http://upnp.org/specs/gw/UPnP-gw-IGD-TestFiles-20010921.zip",
-		Hacks:        []DCPHackFn{totalBytesHack},
+		Src: multiProvider{
+			upnpdotorg{
+				DocURL:     "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v1-Device.pdf",
+				XMLSpecURL: "http://upnp.org/specs/gw/UPnP-gw-IGD-TestFiles-20010921.zip",
+				Hacks:      []DCPHackFn{totalBytesHack},
+			},
+			openconnectivitydotorg{
+				SpecsURL:       allSpecsURL,
+				DocPath:        "*/*/UPnP-gw-*v1*.pdf",
+				XMLSpecZipPath: "*/*/UPnP-gw-IGD-TestFiles-*.zip",
+				XMLSpecPath:    "*/*/*1.xml",
+			},
+		},
 	},
 	{
 		Name:         "internetgateway2",
 		OfficialName: "Internet Gateway Device v2",
-		DocURL:       "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v2-Device.pdf",
-		XMLSpecURL:   "http://upnp.org/specs/gw/UPnP-gw-IGD-Testfiles-20110224.zip",
-		Hacks: []DCPHackFn{
-			func(dcp *DCP) error {
-				missingURN := "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"
-				if _, ok := dcp.ServiceTypes[missingURN]; ok {
-					return nil
-				}
-				urnParts, err := extractURNParts(missingURN, serviceURNPrefix)
-				if err != nil {
-					return err
-				}
-				dcp.ServiceTypes[missingURN] = urnParts
-				return nil
-			}, totalBytesHack,
+		Src: multiProvider{
+			upnpdotorg{
+				DocURL:     "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v2-Device.pdf",
+				XMLSpecURL: "http://upnp.org/specs/gw/UPnP-gw-IGD-Testfiles-20110224.zip",
+				Hacks: []DCPHackFn{
+					func(dcp *DCP) error {
+						missingURN := "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"
+						if _, ok := dcp.ServiceTypes[missingURN]; ok {
+							return nil
+						}
+						urnParts, err := extractURNParts(missingURN, serviceURNPrefix)
+						if err != nil {
+							return err
+						}
+						dcp.ServiceTypes[missingURN] = urnParts
+						return nil
+					}, totalBytesHack,
+				},
+			},
+			openconnectivitydotorg{
+				SpecsURL:       allSpecsURL,
+				DocPath:        "*/*/UPnP-gw-*v2*.pdf",
+				XMLSpecZipPath: "*/*/UPnP-gw-IGD-TestFiles-*.zip",
+				XMLSpecPath:    "*/*/*{1,2}.xml",
+			},
 		},
 	},
 	{
 		Name:         "av1",
 		OfficialName: "MediaServer v1 and MediaRenderer v1",
-		DocURL:       "http://upnp.org/specs/av/av1/",
-		XMLSpecURL:   "http://upnp.org/specs/av/UPnP-av-TestFiles-20070927.zip",
+		Src: multiProvider{
+			upnpdotorg{
+				DocURL:     "http://upnp.org/specs/av/av1/",
+				XMLSpecURL: "http://upnp.org/specs/av/UPnP-av-TestFiles-20070927.zip",
+			},
+		},
+	},
+	{
+		Name:         "av3",
+		OfficialName: "MediaServer v3 and MediaRenderer v4",
+		Src: multiProvider{
+			openconnectivitydotorg{
+				SpecsURL:       allSpecsURL,
+				DocPath:        "*/*/UPnP-gw-*v{3,4}*.pdf",
+				XMLSpecZipPath: "*/*/UPnP-av-TestFiles-*.zip",
+				XMLSpecPath:    "*/*/*{3,4}.xml",
+			},
+		},
 	},
 }
 

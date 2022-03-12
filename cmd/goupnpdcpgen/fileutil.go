@@ -3,8 +3,10 @@ package main
 import (
 	"archive/zip"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -12,12 +14,7 @@ import (
 )
 
 func acquireFile(specFilename string, xmlSpecURL string) error {
-	if f, err := os.Open(specFilename); err != nil {
-		if !os.IsNotExist(err) {
-			return err
-		}
-	} else {
-		f.Close()
+	if filexists(specFilename) {
 		return nil
 	}
 
@@ -26,7 +23,7 @@ func acquireFile(specFilename string, xmlSpecURL string) error {
 		return err
 	}
 
-	return os.Rename(tmpFilename, specFilename)
+	return copyFile(specFilename, tmpFilename)
 }
 
 func downloadFile(filename, url string) error {
@@ -54,9 +51,9 @@ func downloadFile(filename, url string) error {
 	return w.Close()
 }
 
-func globFiles(pattern string, archive *zip.ReadCloser) []*zip.File {
+func globFiles(pattern string, archive []*zip.File) []*zip.File {
 	var files []*zip.File
-	for _, f := range archive.File {
+	for _, f := range archive {
 		if matched, err := path.Match(pattern, f.Name); err != nil {
 			// This shouldn't happen - all patterns are hard-coded, errors in them
 			// are a programming error.
@@ -92,4 +89,55 @@ func urnPartsFromSCPDFilename(filename string) (*URNParts, error) {
 		Name:    name,
 		Version: version,
 	}, nil
+}
+
+func copyFile(dst string, src string) error {
+	f, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	return writeFile(dst, f)
+}
+func writeFile(dst string, r io.ReadCloser) error {
+	defer r.Close()
+	f, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(f, r)
+	return err
+}
+
+func filexists(p string) bool {
+	f, err := os.Open(p)
+	if err != nil {
+		return !os.IsNotExist(err)
+	}
+	f.Close()
+	return true
+}
+
+type unbufferedReaderAt struct {
+	R io.Reader
+	N int64
+}
+
+func newUnbufferedReaderAt(r io.Reader) io.ReaderAt {
+	return &unbufferedReaderAt{R: r}
+}
+
+func (u *unbufferedReaderAt) ReadAt(p []byte, off int64) (n int, err error) {
+	if off < u.N {
+		return 0, errors.New("invalid offset")
+	}
+	diff := off - u.N
+	written, err := io.CopyN(ioutil.Discard, u.R, diff)
+	u.N += written
+	if err != nil {
+		return int(written), err
+	}
+
+	n, err = u.R.Read(p)
+	u.N += int64(n)
+	return
 }
