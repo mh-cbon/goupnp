@@ -35,22 +35,26 @@ func (dcp *DCP) Reset() {
 	dcp.ServiceTypes = make(map[string]*URNParts)
 }
 
-func (dcp *DCP) processZipFile(archive []*zip.File) error {
+func (dcp *DCP) processZipFile(archive []*zip.File, devices, services []string) error {
 	var f int
-	for _, deviceFile := range globFiles("*/device/*.xml", archive) {
-		if err := dcp.processDeviceFile(deviceFile); err != nil {
-			return err
+	for _, devicesGlob := range devices {
+		for _, deviceFile := range globFiles(devicesGlob, archive) {
+			if err := dcp.processDeviceFile(deviceFile); err != nil {
+				return err
+			}
+			f++
 		}
-		f++
 	}
-	for _, scpdFile := range globFiles("*/service/*.xml", archive) {
-		if err := dcp.processSCPDFile(scpdFile); err != nil {
-			return err
+	for _, scpdsGlob := range services {
+		for _, scpdFile := range globFiles(scpdsGlob, archive) {
+			if err := dcp.processSCPDFile(scpdFile); err != nil {
+				return err
+			}
+			f++
 		}
-		f++
 	}
 	if f < 1 {
-		return fmt.Errorf("no sdcp found in %q and %q", "*/device/*.xml", "*/service/*.xml")
+		return fmt.Errorf("no sdcp/device found in %q and %q", devices, services)
 	}
 	return nil
 }

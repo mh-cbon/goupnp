@@ -31,7 +31,7 @@ func (u upnpdotorg) process(tmpdir, name string, dcp *DCP) error {
 		return fmt.Errorf("error reading zip file %q: %v", specFilename, err)
 	}
 	defer archive.Close()
-	if err := dcp.processZipFile(archive.File); err != nil {
+	if err := dcp.processZipFile(archive.File, []string{"*/device/*.xml"}, []string{"*/service/*.xml"}); err != nil {
 		return fmt.Errorf("error processing spec file %q: %v", specFilename, err)
 	}
 	for i, hack := range u.Hacks {
@@ -45,10 +45,11 @@ func (u upnpdotorg) process(tmpdir, name string, dcp *DCP) error {
 const allSpecsURL = "https://openconnectivity.org/upnp-specs/upnpresources.zip"
 
 type openconnectivitydotorg struct {
-	DocPath        string // Optional - Glob to the related documentation about the DCP.
-	SpecsURL       string // The HTTP location of the zip archive containing all XML spec.
-	XMLSpecZipPath string // Glob to the zip XML spec file.
-	XMLSpecPath    string // Glob to the devices and services XMl files.
+	DocPath        string   // Optional - Glob to the related documentation about the DCP.
+	SpecsURL       string   // The HTTP location of the zip archive containing all XML spec.
+	XMLSpecZipPath string   // Glob to the zip XML spec file.
+	XMLServicePath []string // Glob to the device  XMl files.
+	XMLDevicePath  []string // Glob to the service XMl files.
 	// Any special-case functions to run against the DCP before writing it out.
 	Hacks []DCPHackFn
 }
@@ -63,7 +64,11 @@ func (o openconnectivitydotorg) process(tmpdir, name string, dcp *DCP) error {
 	if err != nil {
 		return fmt.Errorf("error reading zip file %q: %v", allSpecsFilename, err)
 	}
-	for _, specArchive := range globFiles(o.XMLSpecZipPath, allSpecsArchive.File) {
+	specsArchives := globFiles(o.XMLSpecZipPath, allSpecsArchive.File)
+	if len(specsArchives) < 1 {
+		return fmt.Errorf("zip archive %q does not contain specifications at %q", allSpecsFilename, o.XMLSpecZipPath)
+	}
+	for _, specArchive := range specsArchives {
 		f, err := specArchive.Open()
 		if err != nil {
 			return fmt.Errorf("error reading zip file %q: %v", specArchive.Name, err)
@@ -73,13 +78,13 @@ func (o openconnectivitydotorg) process(tmpdir, name string, dcp *DCP) error {
 		if err != nil {
 			return fmt.Errorf("error reading zip file %q: %v", specArchive.Name, err)
 		}
-		if err := dcp.processZipFile(archive.File); err != nil {
+		if err := dcp.processZipFile(archive.File, o.XMLDevicePath, o.XMLServicePath); err != nil {
 			return fmt.Errorf("error processing spec file %q: %v", specArchive.Name, err)
 		}
-		for i, hack := range o.Hacks {
-			if err := hack(dcp); err != nil {
-				return fmt.Errorf("error with Hack[%d] for %s: %v", i, name, err)
-			}
+	}
+	for i, hack := range o.Hacks {
+		if err := hack(dcp); err != nil {
+			return fmt.Errorf("error with Hack[%d] for %s: %v", i, name, err)
 		}
 	}
 

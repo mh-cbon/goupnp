@@ -21,7 +21,9 @@ var dcpMetadata = []DCPMetadata{
 				SpecsURL:       allSpecsURL,
 				DocPath:        "*/*/UPnP-gw-*v1*.pdf",
 				XMLSpecZipPath: "*/*/UPnP-gw-IGD-TestFiles-*.zip",
-				XMLSpecPath:    "*/*/*1.xml",
+				XMLServicePath: []string{"*/service/*1.xml", "*/service/WANIPConnection2.xml"},
+				XMLDevicePath:  []string{"*/device/*1.xml", "*/device/WANConnectionDevice2.xml", "*/device/WANDevice2.xml"},
+				Hacks:          []DCPHackFn{fixMissingURN, totalBytesHack},
 			},
 		},
 	},
@@ -32,26 +34,15 @@ var dcpMetadata = []DCPMetadata{
 			// upnpdotorg{
 			// 	DocURL:     "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v2-Device.pdf",
 			// 	XMLSpecURL: "http://upnp.org/specs/gw/UPnP-gw-IGD-Testfiles-20110224.zip",
-			// 	Hacks: []DCPHackFn{
-			// 		func(dcp *DCP) error {
-			// 			missingURN := "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"
-			// 			if _, ok := dcp.ServiceTypes[missingURN]; ok {
-			// 				return nil
-			// 			}
-			// 			urnParts, err := extractURNParts(missingURN, serviceURNPrefix)
-			// 			if err != nil {
-			// 				return err
-			// 			}
-			// 			dcp.ServiceTypes[missingURN] = urnParts
-			// 			return nil
-			// 		}, totalBytesHack,
-			// 	},
+			// 	Hacks: []DCPHackFn{fixMissingURN, totalBytesHack},
 			// },
 			openconnectivitydotorg{
 				SpecsURL:       allSpecsURL,
 				DocPath:        "*/*/UPnP-gw-*v2*.pdf",
 				XMLSpecZipPath: "*/*/UPnP-gw-IGD-TestFiles-*.zip",
-				XMLSpecPath:    "*/*/*{1,2}.xml",
+				XMLServicePath: []string{"*/service/*1.xml", "*/service/*2.xml"},
+				XMLDevicePath:  []string{"*/device/*1.xml", "*/device/*2.xml"},
+				Hacks:          []DCPHackFn{fixMissingURN, totalBytesHack},
 			},
 		},
 	},
@@ -73,7 +64,8 @@ var dcpMetadata = []DCPMetadata{
 				SpecsURL:       allSpecsURL,
 				DocPath:        "*/*/UPnP-gw-*v{3,4}*.pdf",
 				XMLSpecZipPath: "*/*/UPnP-av-TestFiles-*.zip",
-				XMLSpecPath:    "*/*/*{3,4}.xml",
+				XMLServicePath: []string{"*/*/service/*3.xml", "*/*/service/*4.xml"},
+				XMLDevicePath:  []string{"*/*/device/*3.xml", "*/*/device/*4.xml"},
 			},
 		},
 	},
@@ -96,6 +88,19 @@ func totalBytesHack(dcp *DCP) error {
 		}
 	}
 
+	return nil
+}
+
+func fixMissingURN(dcp *DCP) error {
+	missingURN := "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"
+	if _, ok := dcp.ServiceTypes[missingURN]; ok {
+		return nil
+	}
+	urnParts, err := extractURNParts(missingURN, serviceURNPrefix)
+	if err != nil {
+		return err
+	}
+	dcp.ServiceTypes[missingURN] = urnParts
 	return nil
 }
 

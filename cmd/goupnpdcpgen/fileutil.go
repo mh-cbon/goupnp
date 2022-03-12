@@ -14,11 +14,13 @@ import (
 )
 
 func acquireFile(specFilename string, xmlSpecURL string) error {
+	tmpFilename := specFilename + ".download"
+	defer os.Remove(tmpFilename)
+
 	if filexists(specFilename) {
 		return nil
 	}
 
-	tmpFilename := specFilename + ".download"
 	if err := downloadFile(tmpFilename, xmlSpecURL); err != nil {
 		return err
 	}
