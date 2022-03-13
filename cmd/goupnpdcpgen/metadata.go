@@ -1,5 +1,7 @@
 package main
 
+import "strings"
+
 // DCP contains extra metadata to use when generating DCP source files.
 type DCPMetadata struct {
 	Name         string // What to name the Go DCP package.
@@ -77,7 +79,7 @@ func totalBytesHack(dcp *DCP) error {
 			variables := service.SCPD.StateVariables
 			for key, variable := range variables {
 				varName := variable.Name
-				if varName == "TotalBytesSent" || varName == "TotalBytesReceived" {
+				if strings.HasSuffix(varName, "TotalBytesSent") || strings.HasSuffix(varName, "TotalBytesReceived") {
 					// Fix size of total bytes which is by default ui4 or maximum 4 GiB.
 					variable.DataType.Name = "ui8"
 					variables[key] = variable
