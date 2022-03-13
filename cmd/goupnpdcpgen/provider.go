@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"fmt"
 	"path/filepath"
-	"strings"
 
 	"github.com/hashicorp/go-multierror"
 )
@@ -20,7 +19,7 @@ type upnpdotorg struct {
 }
 
 func (u upnpdotorg) process(tmpdir, name string, dcp *DCP) error {
-	dcp.DocURL = u.DocURL
+	dcp.DocURLs = append(dcp.DocURLs, u.DocURL)
 	specFilename := filepath.Join(tmpdir, name+".zip")
 	err := acquireFile(specFilename, u.XMLSpecURL)
 	if err != nil {
@@ -45,11 +44,13 @@ func (u upnpdotorg) process(tmpdir, name string, dcp *DCP) error {
 const allSpecsURL = "https://openconnectivity.org/upnp-specs/upnpresources.zip"
 
 type openconnectivitydotorg struct {
-	DocPath        string   // Optional - Glob to the related documentation about the DCP.
-	SpecsURL       string   // The HTTP location of the zip archive containing all XML spec.
-	XMLSpecZipPath string   // Glob to the zip XML spec file.
-	XMLServicePath []string // Glob to the device  XMl files.
-	XMLDevicePath  []string // Glob to the service XMl files.
+	DocPath        string // Optional - Glob to the related documentation about the DCP.
+	SpecsURL       string // The HTTP location of the zip archive containing all XML spec.
+	XMLSpecZipPath string // Glob to the zip XML spec file within upnpresources.zip.
+	// Glob to the services XML files within the ZIP matching XMLSpecZipPath.
+	XMLServicePath []string
+	// Glob to the devices XML files within the ZIP matching XMLSpecZipPath.
+	XMLDevicePath []string
 	// Any special-case functions to run against the DCP before writing it out.
 	Hacks []DCPHackFn
 }
@@ -89,9 +90,8 @@ func (o openconnectivitydotorg) process(tmpdir, name string, dcp *DCP) error {
 	}
 
 	for _, d := range globFiles(o.DocPath, allSpecsArchive.File) {
-		dcp.DocURL += d.Name + ", "
+		dcp.DocURLs = append(dcp.DocURLs, d.Name)
 	}
-	dcp.DocURL = strings.TrimSuffix(dcp.DocURL, ", ")
 	return nil
 }
 

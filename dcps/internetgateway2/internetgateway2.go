@@ -1,6 +1,10 @@
 // Client for UPnP Device Control Protocol Internet Gateway Device v2.
 //
-// This DCP is documented in detail at: standardizeddcps/Internet Gateway_2/UPnP-gw-InternetGatewayDevice-v2-Device-20101210.pdf, standardizeddcps/Internet Gateway_2/UPnP-gw-WANConnectionDevice-v2-Device-20100910.pdf, standardizeddcps/Internet Gateway_2/UPnP-gw-WANDevice-v2-Device-20100910.pdf, standardizeddcps/Internet Gateway_2/UPnP-gw-WANIPConnection-v2-Service-20100910.pdf
+// This DCP is documented in detail at:
+// - standardizeddcps/Internet Gateway_2/UPnP-gw-InternetGatewayDevice-v2-Device-20101210.pdf
+// - standardizeddcps/Internet Gateway_2/UPnP-gw-WANConnectionDevice-v2-Device-20100910.pdf
+// - standardizeddcps/Internet Gateway_2/UPnP-gw-WANDevice-v2-Device-20100910.pdf
+// - standardizeddcps/Internet Gateway_2/UPnP-gw-WANIPConnection-v2-Service-20100910.pdf
 //
 // Typically, use one of the New* functions to create clients for services.
 package internetgateway2

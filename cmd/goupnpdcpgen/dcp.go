@@ -15,7 +15,7 @@ import (
 // DCP collects together information about a UPnP Device Control Protocol.
 type DCP struct {
 	Metadata     DCPMetadata
-	DocURL       string
+	DocURLs      []string
 	DeviceTypes  map[string]*URNParts
 	ServiceTypes map[string]*URNParts
 	Services     []SCPDWithURN
@@ -30,7 +30,7 @@ func newDCP(metadata DCPMetadata) *DCP {
 }
 
 func (dcp *DCP) Reset() {
-	dcp.DocURL = ""
+	dcp.DocURLs = dcp.DocURLs[:0]
 	dcp.DeviceTypes = make(map[string]*URNParts)
 	dcp.ServiceTypes = make(map[string]*URNParts)
 }

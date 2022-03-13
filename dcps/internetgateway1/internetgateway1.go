@@ -1,6 +1,12 @@
 // Client for UPnP Device Control Protocol Internet Gateway Device v1.
 //
-// This DCP is documented in detail at: standardizeddcps/DeviceProtection_1/UPnP-gw-DeviceProtection-v1-Service-20110224.pdf, standardizeddcps/Internet Gateway_2/UPnP-gw-WANIPv6FirewallControl-v1-Service-20101210.pdf, standardizeddcps/WLAN Access Point Device_1/UPnP-gw-LinkAuthentication-v1-Service-20031017.pdf, standardizeddcps/WLAN Access Point Device_1/UPnP-gw-RadiusClient-v1-Service-20031017.pdf, standardizeddcps/WLAN Access Point Device_1/UPnP-gw-WLANAccessPointDevice-v1-Device-20031017.pdf, standardizeddcps/WLAN Access Point Device_1/UPnP-gw-WLANConfiguration-v1-Service-20031017.pdf
+// This DCP is documented in detail at:
+// - standardizeddcps/DeviceProtection_1/UPnP-gw-DeviceProtection-v1-Service-20110224.pdf
+// - standardizeddcps/Internet Gateway_2/UPnP-gw-WANIPv6FirewallControl-v1-Service-20101210.pdf
+// - standardizeddcps/WLAN Access Point Device_1/UPnP-gw-LinkAuthentication-v1-Service-20031017.pdf
+// - standardizeddcps/WLAN Access Point Device_1/UPnP-gw-RadiusClient-v1-Service-20031017.pdf
+// - standardizeddcps/WLAN Access Point Device_1/UPnP-gw-WLANAccessPointDevice-v1-Device-20031017.pdf
+// - standardizeddcps/WLAN Access Point Device_1/UPnP-gw-WLANConfiguration-v1-Service-20031017.pdf
 //
 // Typically, use one of the New* functions to create clients for services.
 package internetgateway1

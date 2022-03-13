@@ -17,7 +17,7 @@ func acquireFile(specFilename string, xmlSpecURL string) error {
 	tmpFilename := specFilename + ".download"
 	defer os.Remove(tmpFilename)
 
-	if filexists(specFilename) {
+	if fileExists(specFilename) {
 		return nil
 	}
 
@@ -100,6 +100,7 @@ func copyFile(dst string, src string) error {
 	}
 	return writeFile(dst, f)
 }
+
 func writeFile(dst string, r io.ReadCloser) error {
 	defer r.Close()
 	f, err := os.Create(dst)
@@ -110,7 +111,7 @@ func writeFile(dst string, r io.ReadCloser) error {
 	return err
 }
 
-func filexists(p string) bool {
+func fileExists(p string) bool {
 	f, err := os.Open(p)
 	if err != nil {
 		return !os.IsNotExist(err)

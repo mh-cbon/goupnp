@@ -144,7 +144,8 @@ func (httpu *HTTPUClient) Do(
 		}
 
 		// Set the related local address used to discover the device.
-		response.Header.Add(LocalAddress, httpu.conn.LocalAddr().(*net.UDPAddr).IP.String())
+		response.Header.Add(LocalAddressHeader,
+			httpu.conn.LocalAddr().(*net.UDPAddr).IP.String())
 
 		responses = append(responses, response)
 	}
@@ -153,4 +154,6 @@ func (httpu *HTTPUClient) Do(
 	return responses, nil
 }
 
-const LocalAddress = "goupnp-local-address"
+// LocalAddressHeader is the name of the HTTP response header
+// containing the net address that read the response.
+const LocalAddressHeader = "goupnp-local-address"

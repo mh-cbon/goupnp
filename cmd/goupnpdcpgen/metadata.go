@@ -62,7 +62,7 @@ var dcpMetadata = []DCPMetadata{
 		Src: multiProvider{
 			openconnectivitydotorg{
 				SpecsURL:       allSpecsURL,
-				DocPath:        "*/*/UPnP-gw-*v{3,4}*.pdf",
+				DocPath:        "*/*/UPnP-av-*v{3,4}*.pdf",
 				XMLSpecZipPath: "*/*/UPnP-av-TestFiles-*.zip",
 				XMLServicePath: []string{"*/*/service/*3.xml", "*/*/service/*4.xml"},
 				XMLDevicePath:  []string{"*/*/device/*3.xml", "*/*/device/*4.xml"},
