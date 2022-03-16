@@ -2,11 +2,6 @@
 //
 // This DCP is documented in detail at:
 // - standardizeddcps/DeviceProtection_1/UPnP-gw-DeviceProtection-v1-Service-20110224.pdf
-// - standardizeddcps/Internet Gateway_2/UPnP-gw-WANIPv6FirewallControl-v1-Service-20101210.pdf
-// - standardizeddcps/WLAN Access Point Device_1/UPnP-gw-LinkAuthentication-v1-Service-20031017.pdf
-// - standardizeddcps/WLAN Access Point Device_1/UPnP-gw-RadiusClient-v1-Service-20031017.pdf
-// - standardizeddcps/WLAN Access Point Device_1/UPnP-gw-WLANAccessPointDevice-v1-Device-20031017.pdf
-// - standardizeddcps/WLAN Access Point Device_1/UPnP-gw-WLANConfiguration-v1-Service-20031017.pdf
 //
 // Typically, use one of the New* functions to create clients for services.
 package internetgateway1
@@ -31,7 +26,6 @@ var _ time.Time
 const (
 	URN_LANDevice_1           = "urn:schemas-upnp-org:device:LANDevice:1"
 	URN_WANConnectionDevice_1 = "urn:schemas-upnp-org:device:WANConnectionDevice:1"
-	URN_WANConnectionDevice_2 = "urn:schemas-upnp-org:device:WANConnectionDevice:2"
 	URN_WANDevice_1           = "urn:schemas-upnp-org:device:WANDevice:1"
 )
 
@@ -49,6 +43,624 @@ const (
 	URN_WANPOTSLinkConfig_1        = "urn:schemas-upnp-org:service:WANPOTSLinkConfig:1"
 	URN_WANPPPConnection_1         = "urn:schemas-upnp-org:service:WANPPPConnection:1"
 )
+
+// DeviceProtection1 is a client for UPnP SOAP service with URN "urn:schemas-upnp-org:service:DeviceProtection:1". See
+// goupnp.ServiceClient, which contains RootDevice and Service attributes which
+// are provided for informational value.
+type DeviceProtection1 struct {
+	goupnp.ServiceClient
+}
+
+// NewDeviceProtection1Clients discovers instances of the service on the network,
+// and returns clients to any that are found. errors will contain an error for
+// any devices that replied but which could not be queried, and err will be set
+// if the discovery process failed outright.
+//
+// This is a typical entry calling point into this package.
+func NewDeviceProtection1Clients() (clients []*DeviceProtection1, errors []error, err error) {
+	var genericClients []goupnp.ServiceClient
+	if genericClients, errors, err = goupnp.NewServiceClients(URN_DeviceProtection_1); err != nil {
+		return
+	}
+	clients = newDeviceProtection1ClientsFromGenericClients(genericClients)
+	return
+}
+
+// NewDeviceProtection1ClientsByURL discovers instances of the service at the given
+// URL, and returns clients to any that are found. An error is returned if
+// there was an error probing the service.
+//
+// This is a typical entry calling point into this package when reusing an
+// previously discovered service URL.
+func NewDeviceProtection1ClientsByURL(loc *url.URL) ([]*DeviceProtection1, error) {
+	genericClients, err := goupnp.NewServiceClientsByURL(loc, URN_DeviceProtection_1)
+	if err != nil {
+		return nil, err
+	}
+	return newDeviceProtection1ClientsFromGenericClients(genericClients), nil
+}
+
+// NewDeviceProtection1ClientsFromRootDevice discovers instances of the service in
+// a given root device, and returns clients to any that are found. An error is
+// returned if there was not at least one instance of the service within the
+// device. The location parameter is simply assigned to the Location attribute
+// of the wrapped ServiceClient(s).
+//
+// This is a typical entry calling point into this package when reusing an
+// previously discovered root device.
+func NewDeviceProtection1ClientsFromRootDevice(rootDevice *goupnp.RootDevice, loc *url.URL) ([]*DeviceProtection1, error) {
+	genericClients, err := goupnp.NewServiceClientsFromRootDevice(rootDevice, loc, URN_DeviceProtection_1)
+	if err != nil {
+		return nil, err
+	}
+	return newDeviceProtection1ClientsFromGenericClients(genericClients), nil
+}
+
+func newDeviceProtection1ClientsFromGenericClients(genericClients []goupnp.ServiceClient) []*DeviceProtection1 {
+	clients := make([]*DeviceProtection1, len(genericClients))
+	for i := range genericClients {
+		clients[i] = &DeviceProtection1{genericClients[i]}
+	}
+	return clients
+}
+
+func (client *DeviceProtection1) AddIdentityListCtx(
+	ctx context.Context,
+	IdentityList string,
+) (IdentityListResult string, err error) {
+	// Request structure.
+	request := &struct {
+		IdentityList string
+	}{}
+	// BEGIN Marshal arguments into request.
+
+	if request.IdentityList, err = soap.MarshalString(IdentityList); err != nil {
+		return
+	}
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := &struct {
+		IdentityListResult string
+	}{}
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "AddIdentityList", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	if IdentityListResult, err = soap.UnmarshalString(response.IdentityListResult); err != nil {
+		return
+	}
+	// END Unmarshal arguments from response.
+	return
+}
+
+// AddIdentityList is the legacy version of AddIdentityListCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) AddIdentityList(IdentityList string) (IdentityListResult string, err error) {
+	return client.AddIdentityListCtx(context.Background(),
+		IdentityList,
+	)
+}
+
+func (client *DeviceProtection1) AddRolesForIdentityCtx(
+	ctx context.Context,
+	Identity string,
+	RoleList string,
+) (err error) {
+	// Request structure.
+	request := &struct {
+		Identity string
+		RoleList string
+	}{}
+	// BEGIN Marshal arguments into request.
+
+	if request.Identity, err = soap.MarshalString(Identity); err != nil {
+		return
+	}
+	if request.RoleList, err = soap.MarshalString(RoleList); err != nil {
+		return
+	}
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := interface{}(nil)
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "AddRolesForIdentity", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	// END Unmarshal arguments from response.
+	return
+}
+
+// AddRolesForIdentity is the legacy version of AddRolesForIdentityCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) AddRolesForIdentity(Identity string, RoleList string) (err error) {
+	return client.AddRolesForIdentityCtx(context.Background(),
+		Identity,
+		RoleList,
+	)
+}
+
+func (client *DeviceProtection1) GetACLDataCtx(
+	ctx context.Context,
+) (ACL string, err error) {
+	// Request structure.
+	request := interface{}(nil)
+	// BEGIN Marshal arguments into request.
+
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := &struct {
+		ACL string
+	}{}
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "GetACLData", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	if ACL, err = soap.UnmarshalString(response.ACL); err != nil {
+		return
+	}
+	// END Unmarshal arguments from response.
+	return
+}
+
+// GetACLData is the legacy version of GetACLDataCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) GetACLData() (ACL string, err error) {
+	return client.GetACLDataCtx(context.Background())
+}
+
+func (client *DeviceProtection1) GetAssignedRolesCtx(
+	ctx context.Context,
+) (RoleList string, err error) {
+	// Request structure.
+	request := interface{}(nil)
+	// BEGIN Marshal arguments into request.
+
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := &struct {
+		RoleList string
+	}{}
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "GetAssignedRoles", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	if RoleList, err = soap.UnmarshalString(response.RoleList); err != nil {
+		return
+	}
+	// END Unmarshal arguments from response.
+	return
+}
+
+// GetAssignedRoles is the legacy version of GetAssignedRolesCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) GetAssignedRoles() (RoleList string, err error) {
+	return client.GetAssignedRolesCtx(context.Background())
+}
+
+func (client *DeviceProtection1) GetRolesForActionCtx(
+	ctx context.Context,
+	DeviceUDN string,
+	ServiceId string,
+	ActionName string,
+) (RoleList string, RestrictedRoleList string, err error) {
+	// Request structure.
+	request := &struct {
+		DeviceUDN  string
+		ServiceId  string
+		ActionName string
+	}{}
+	// BEGIN Marshal arguments into request.
+
+	if request.DeviceUDN, err = soap.MarshalString(DeviceUDN); err != nil {
+		return
+	}
+	if request.ServiceId, err = soap.MarshalString(ServiceId); err != nil {
+		return
+	}
+	if request.ActionName, err = soap.MarshalString(ActionName); err != nil {
+		return
+	}
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := &struct {
+		RoleList           string
+		RestrictedRoleList string
+	}{}
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "GetRolesForAction", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	if RoleList, err = soap.UnmarshalString(response.RoleList); err != nil {
+		return
+	}
+	if RestrictedRoleList, err = soap.UnmarshalString(response.RestrictedRoleList); err != nil {
+		return
+	}
+	// END Unmarshal arguments from response.
+	return
+}
+
+// GetRolesForAction is the legacy version of GetRolesForActionCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) GetRolesForAction(DeviceUDN string, ServiceId string, ActionName string) (RoleList string, RestrictedRoleList string, err error) {
+	return client.GetRolesForActionCtx(context.Background(),
+		DeviceUDN,
+		ServiceId,
+		ActionName,
+	)
+}
+
+func (client *DeviceProtection1) GetSupportedProtocolsCtx(
+	ctx context.Context,
+) (ProtocolList string, err error) {
+	// Request structure.
+	request := interface{}(nil)
+	// BEGIN Marshal arguments into request.
+
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := &struct {
+		ProtocolList string
+	}{}
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "GetSupportedProtocols", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	if ProtocolList, err = soap.UnmarshalString(response.ProtocolList); err != nil {
+		return
+	}
+	// END Unmarshal arguments from response.
+	return
+}
+
+// GetSupportedProtocols is the legacy version of GetSupportedProtocolsCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) GetSupportedProtocols() (ProtocolList string, err error) {
+	return client.GetSupportedProtocolsCtx(context.Background())
+}
+
+func (client *DeviceProtection1) GetUserLoginChallengeCtx(
+	ctx context.Context,
+	ProtocolType string,
+	Name string,
+) (Salt []byte, Challenge []byte, err error) {
+	// Request structure.
+	request := &struct {
+		ProtocolType string
+		Name         string
+	}{}
+	// BEGIN Marshal arguments into request.
+
+	if request.ProtocolType, err = soap.MarshalString(ProtocolType); err != nil {
+		return
+	}
+	if request.Name, err = soap.MarshalString(Name); err != nil {
+		return
+	}
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := &struct {
+		Salt      string
+		Challenge string
+	}{}
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "GetUserLoginChallenge", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	if Salt, err = soap.UnmarshalBinBase64(response.Salt); err != nil {
+		return
+	}
+	if Challenge, err = soap.UnmarshalBinBase64(response.Challenge); err != nil {
+		return
+	}
+	// END Unmarshal arguments from response.
+	return
+}
+
+// GetUserLoginChallenge is the legacy version of GetUserLoginChallengeCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) GetUserLoginChallenge(ProtocolType string, Name string) (Salt []byte, Challenge []byte, err error) {
+	return client.GetUserLoginChallengeCtx(context.Background(),
+		ProtocolType,
+		Name,
+	)
+}
+
+func (client *DeviceProtection1) RemoveIdentityCtx(
+	ctx context.Context,
+	Identity string,
+) (err error) {
+	// Request structure.
+	request := &struct {
+		Identity string
+	}{}
+	// BEGIN Marshal arguments into request.
+
+	if request.Identity, err = soap.MarshalString(Identity); err != nil {
+		return
+	}
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := interface{}(nil)
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "RemoveIdentity", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	// END Unmarshal arguments from response.
+	return
+}
+
+// RemoveIdentity is the legacy version of RemoveIdentityCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) RemoveIdentity(Identity string) (err error) {
+	return client.RemoveIdentityCtx(context.Background(),
+		Identity,
+	)
+}
+
+func (client *DeviceProtection1) RemoveRolesForIdentityCtx(
+	ctx context.Context,
+	Identity string,
+	RoleList string,
+) (err error) {
+	// Request structure.
+	request := &struct {
+		Identity string
+		RoleList string
+	}{}
+	// BEGIN Marshal arguments into request.
+
+	if request.Identity, err = soap.MarshalString(Identity); err != nil {
+		return
+	}
+	if request.RoleList, err = soap.MarshalString(RoleList); err != nil {
+		return
+	}
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := interface{}(nil)
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "RemoveRolesForIdentity", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	// END Unmarshal arguments from response.
+	return
+}
+
+// RemoveRolesForIdentity is the legacy version of RemoveRolesForIdentityCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) RemoveRolesForIdentity(Identity string, RoleList string) (err error) {
+	return client.RemoveRolesForIdentityCtx(context.Background(),
+		Identity,
+		RoleList,
+	)
+}
+
+func (client *DeviceProtection1) SendSetupMessageCtx(
+	ctx context.Context,
+	ProtocolType string,
+	InMessage []byte,
+) (OutMessage []byte, err error) {
+	// Request structure.
+	request := &struct {
+		ProtocolType string
+		InMessage    string
+	}{}
+	// BEGIN Marshal arguments into request.
+
+	if request.ProtocolType, err = soap.MarshalString(ProtocolType); err != nil {
+		return
+	}
+	if request.InMessage, err = soap.MarshalBinBase64(InMessage); err != nil {
+		return
+	}
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := &struct {
+		OutMessage string
+	}{}
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "SendSetupMessage", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	if OutMessage, err = soap.UnmarshalBinBase64(response.OutMessage); err != nil {
+		return
+	}
+	// END Unmarshal arguments from response.
+	return
+}
+
+// SendSetupMessage is the legacy version of SendSetupMessageCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) SendSetupMessage(ProtocolType string, InMessage []byte) (OutMessage []byte, err error) {
+	return client.SendSetupMessageCtx(context.Background(),
+		ProtocolType,
+		InMessage,
+	)
+}
+
+func (client *DeviceProtection1) SetUserLoginPasswordCtx(
+	ctx context.Context,
+	ProtocolType string,
+	Name string,
+	Stored []byte,
+	Salt []byte,
+) (err error) {
+	// Request structure.
+	request := &struct {
+		ProtocolType string
+		Name         string
+		Stored       string
+		Salt         string
+	}{}
+	// BEGIN Marshal arguments into request.
+
+	if request.ProtocolType, err = soap.MarshalString(ProtocolType); err != nil {
+		return
+	}
+	if request.Name, err = soap.MarshalString(Name); err != nil {
+		return
+	}
+	if request.Stored, err = soap.MarshalBinBase64(Stored); err != nil {
+		return
+	}
+	if request.Salt, err = soap.MarshalBinBase64(Salt); err != nil {
+		return
+	}
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := interface{}(nil)
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "SetUserLoginPassword", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	// END Unmarshal arguments from response.
+	return
+}
+
+// SetUserLoginPassword is the legacy version of SetUserLoginPasswordCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) SetUserLoginPassword(ProtocolType string, Name string, Stored []byte, Salt []byte) (err error) {
+	return client.SetUserLoginPasswordCtx(context.Background(),
+		ProtocolType,
+		Name,
+		Stored,
+		Salt,
+	)
+}
+
+func (client *DeviceProtection1) UserLoginCtx(
+	ctx context.Context,
+	ProtocolType string,
+	Challenge []byte,
+	Authenticator []byte,
+) (err error) {
+	// Request structure.
+	request := &struct {
+		ProtocolType  string
+		Challenge     string
+		Authenticator string
+	}{}
+	// BEGIN Marshal arguments into request.
+
+	if request.ProtocolType, err = soap.MarshalString(ProtocolType); err != nil {
+		return
+	}
+	if request.Challenge, err = soap.MarshalBinBase64(Challenge); err != nil {
+		return
+	}
+	if request.Authenticator, err = soap.MarshalBinBase64(Authenticator); err != nil {
+		return
+	}
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := interface{}(nil)
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "UserLogin", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	// END Unmarshal arguments from response.
+	return
+}
+
+// UserLogin is the legacy version of UserLoginCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) UserLogin(ProtocolType string, Challenge []byte, Authenticator []byte) (err error) {
+	return client.UserLoginCtx(context.Background(),
+		ProtocolType,
+		Challenge,
+		Authenticator,
+	)
+}
+
+func (client *DeviceProtection1) UserLogoutCtx(
+	ctx context.Context,
+) (err error) {
+	// Request structure.
+	request := interface{}(nil)
+	// BEGIN Marshal arguments into request.
+
+	// END Marshal arguments into request.
+
+	// Response structure.
+	response := interface{}(nil)
+
+	// Perform the SOAP call.
+	if err = client.SOAPClient.PerformActionCtx(ctx, URN_DeviceProtection_1, "UserLogout", request, response); err != nil {
+		return
+	}
+
+	// BEGIN Unmarshal arguments from response.
+
+	// END Unmarshal arguments from response.
+	return
+}
+
+// UserLogout is the legacy version of UserLogoutCtx, but uses
+// context.Background() as the context.
+func (client *DeviceProtection1) UserLogout() (err error) {
+	return client.UserLogoutCtx(context.Background())
+}
 
 // LANHostConfigManagement1 is a client for UPnP SOAP service with URN "urn:schemas-upnp-org:service:LANHostConfigManagement:1". See
 // goupnp.ServiceClient, which contains RootDevice and Service attributes which
@@ -3144,1095 +3756,6 @@ func (client *WANIPConnection1) SetWarnDisconnectDelayCtx(
 // SetWarnDisconnectDelay is the legacy version of SetWarnDisconnectDelayCtx, but uses
 // context.Background() as the context.
 func (client *WANIPConnection1) SetWarnDisconnectDelay(NewWarnDisconnectDelay uint32) (err error) {
-	return client.SetWarnDisconnectDelayCtx(context.Background(),
-		NewWarnDisconnectDelay,
-	)
-}
-
-// WANIPConnection2 is a client for UPnP SOAP service with URN "urn:schemas-upnp-org:service:WANIPConnection:2". See
-// goupnp.ServiceClient, which contains RootDevice and Service attributes which
-// are provided for informational value.
-type WANIPConnection2 struct {
-	goupnp.ServiceClient
-}
-
-// NewWANIPConnection2Clients discovers instances of the service on the network,
-// and returns clients to any that are found. errors will contain an error for
-// any devices that replied but which could not be queried, and err will be set
-// if the discovery process failed outright.
-//
-// This is a typical entry calling point into this package.
-func NewWANIPConnection2Clients() (clients []*WANIPConnection2, errors []error, err error) {
-	var genericClients []goupnp.ServiceClient
-	if genericClients, errors, err = goupnp.NewServiceClients(URN_WANIPConnection_2); err != nil {
-		return
-	}
-	clients = newWANIPConnection2ClientsFromGenericClients(genericClients)
-	return
-}
-
-// NewWANIPConnection2ClientsByURL discovers instances of the service at the given
-// URL, and returns clients to any that are found. An error is returned if
-// there was an error probing the service.
-//
-// This is a typical entry calling point into this package when reusing an
-// previously discovered service URL.
-func NewWANIPConnection2ClientsByURL(loc *url.URL) ([]*WANIPConnection2, error) {
-	genericClients, err := goupnp.NewServiceClientsByURL(loc, URN_WANIPConnection_2)
-	if err != nil {
-		return nil, err
-	}
-	return newWANIPConnection2ClientsFromGenericClients(genericClients), nil
-}
-
-// NewWANIPConnection2ClientsFromRootDevice discovers instances of the service in
-// a given root device, and returns clients to any that are found. An error is
-// returned if there was not at least one instance of the service within the
-// device. The location parameter is simply assigned to the Location attribute
-// of the wrapped ServiceClient(s).
-//
-// This is a typical entry calling point into this package when reusing an
-// previously discovered root device.
-func NewWANIPConnection2ClientsFromRootDevice(rootDevice *goupnp.RootDevice, loc *url.URL) ([]*WANIPConnection2, error) {
-	genericClients, err := goupnp.NewServiceClientsFromRootDevice(rootDevice, loc, URN_WANIPConnection_2)
-	if err != nil {
-		return nil, err
-	}
-	return newWANIPConnection2ClientsFromGenericClients(genericClients), nil
-}
-
-func newWANIPConnection2ClientsFromGenericClients(genericClients []goupnp.ServiceClient) []*WANIPConnection2 {
-	clients := make([]*WANIPConnection2, len(genericClients))
-	for i := range genericClients {
-		clients[i] = &WANIPConnection2{genericClients[i]}
-	}
-	return clients
-}
-
-//
-// Arguments:
-//
-// * NewProtocol: allowed values: TCP, UDP
-//
-// * NewInternalPort: allowed value range: minimum=1, maximum=65535
-//
-// * NewLeaseDuration: allowed value range: minimum=0, maximum=604800
-
-func (client *WANIPConnection2) AddAnyPortMappingCtx(
-	ctx context.Context,
-	NewRemoteHost string,
-	NewExternalPort uint16,
-	NewProtocol string,
-	NewInternalPort uint16,
-	NewInternalClient string,
-	NewEnabled bool,
-	NewPortMappingDescription string,
-	NewLeaseDuration uint32,
-) (NewReservedPort uint16, err error) {
-	// Request structure.
-	request := &struct {
-		NewRemoteHost             string
-		NewExternalPort           string
-		NewProtocol               string
-		NewInternalPort           string
-		NewInternalClient         string
-		NewEnabled                string
-		NewPortMappingDescription string
-		NewLeaseDuration          string
-	}{}
-	// BEGIN Marshal arguments into request.
-
-	if request.NewRemoteHost, err = soap.MarshalString(NewRemoteHost); err != nil {
-		return
-	}
-	if request.NewExternalPort, err = soap.MarshalUi2(NewExternalPort); err != nil {
-		return
-	}
-	if request.NewProtocol, err = soap.MarshalString(NewProtocol); err != nil {
-		return
-	}
-	if request.NewInternalPort, err = soap.MarshalUi2(NewInternalPort); err != nil {
-		return
-	}
-	if request.NewInternalClient, err = soap.MarshalString(NewInternalClient); err != nil {
-		return
-	}
-	if request.NewEnabled, err = soap.MarshalBoolean(NewEnabled); err != nil {
-		return
-	}
-	if request.NewPortMappingDescription, err = soap.MarshalString(NewPortMappingDescription); err != nil {
-		return
-	}
-	if request.NewLeaseDuration, err = soap.MarshalUi4(NewLeaseDuration); err != nil {
-		return
-	}
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := &struct {
-		NewReservedPort string
-	}{}
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "AddAnyPortMapping", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	if NewReservedPort, err = soap.UnmarshalUi2(response.NewReservedPort); err != nil {
-		return
-	}
-	// END Unmarshal arguments from response.
-	return
-}
-
-// AddAnyPortMapping is the legacy version of AddAnyPortMappingCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) AddAnyPortMapping(NewRemoteHost string, NewExternalPort uint16, NewProtocol string, NewInternalPort uint16, NewInternalClient string, NewEnabled bool, NewPortMappingDescription string, NewLeaseDuration uint32) (NewReservedPort uint16, err error) {
-	return client.AddAnyPortMappingCtx(context.Background(),
-		NewRemoteHost,
-		NewExternalPort,
-		NewProtocol,
-		NewInternalPort,
-		NewInternalClient,
-		NewEnabled,
-		NewPortMappingDescription,
-		NewLeaseDuration,
-	)
-}
-
-//
-// Arguments:
-//
-// * NewProtocol: allowed values: TCP, UDP
-//
-// * NewInternalPort: allowed value range: minimum=1, maximum=65535
-//
-// * NewLeaseDuration: allowed value range: minimum=0, maximum=604800
-
-func (client *WANIPConnection2) AddPortMappingCtx(
-	ctx context.Context,
-	NewRemoteHost string,
-	NewExternalPort uint16,
-	NewProtocol string,
-	NewInternalPort uint16,
-	NewInternalClient string,
-	NewEnabled bool,
-	NewPortMappingDescription string,
-	NewLeaseDuration uint32,
-) (err error) {
-	// Request structure.
-	request := &struct {
-		NewRemoteHost             string
-		NewExternalPort           string
-		NewProtocol               string
-		NewInternalPort           string
-		NewInternalClient         string
-		NewEnabled                string
-		NewPortMappingDescription string
-		NewLeaseDuration          string
-	}{}
-	// BEGIN Marshal arguments into request.
-
-	if request.NewRemoteHost, err = soap.MarshalString(NewRemoteHost); err != nil {
-		return
-	}
-	if request.NewExternalPort, err = soap.MarshalUi2(NewExternalPort); err != nil {
-		return
-	}
-	if request.NewProtocol, err = soap.MarshalString(NewProtocol); err != nil {
-		return
-	}
-	if request.NewInternalPort, err = soap.MarshalUi2(NewInternalPort); err != nil {
-		return
-	}
-	if request.NewInternalClient, err = soap.MarshalString(NewInternalClient); err != nil {
-		return
-	}
-	if request.NewEnabled, err = soap.MarshalBoolean(NewEnabled); err != nil {
-		return
-	}
-	if request.NewPortMappingDescription, err = soap.MarshalString(NewPortMappingDescription); err != nil {
-		return
-	}
-	if request.NewLeaseDuration, err = soap.MarshalUi4(NewLeaseDuration); err != nil {
-		return
-	}
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := interface{}(nil)
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "AddPortMapping", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	// END Unmarshal arguments from response.
-	return
-}
-
-// AddPortMapping is the legacy version of AddPortMappingCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) AddPortMapping(NewRemoteHost string, NewExternalPort uint16, NewProtocol string, NewInternalPort uint16, NewInternalClient string, NewEnabled bool, NewPortMappingDescription string, NewLeaseDuration uint32) (err error) {
-	return client.AddPortMappingCtx(context.Background(),
-		NewRemoteHost,
-		NewExternalPort,
-		NewProtocol,
-		NewInternalPort,
-		NewInternalClient,
-		NewEnabled,
-		NewPortMappingDescription,
-		NewLeaseDuration,
-	)
-}
-
-//
-// Arguments:
-//
-// * NewProtocol: allowed values: TCP, UDP
-
-func (client *WANIPConnection2) DeletePortMappingCtx(
-	ctx context.Context,
-	NewRemoteHost string,
-	NewExternalPort uint16,
-	NewProtocol string,
-) (err error) {
-	// Request structure.
-	request := &struct {
-		NewRemoteHost   string
-		NewExternalPort string
-		NewProtocol     string
-	}{}
-	// BEGIN Marshal arguments into request.
-
-	if request.NewRemoteHost, err = soap.MarshalString(NewRemoteHost); err != nil {
-		return
-	}
-	if request.NewExternalPort, err = soap.MarshalUi2(NewExternalPort); err != nil {
-		return
-	}
-	if request.NewProtocol, err = soap.MarshalString(NewProtocol); err != nil {
-		return
-	}
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := interface{}(nil)
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "DeletePortMapping", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	// END Unmarshal arguments from response.
-	return
-}
-
-// DeletePortMapping is the legacy version of DeletePortMappingCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) DeletePortMapping(NewRemoteHost string, NewExternalPort uint16, NewProtocol string) (err error) {
-	return client.DeletePortMappingCtx(context.Background(),
-		NewRemoteHost,
-		NewExternalPort,
-		NewProtocol,
-	)
-}
-
-//
-// Arguments:
-//
-// * NewProtocol: allowed values: TCP, UDP
-
-func (client *WANIPConnection2) DeletePortMappingRangeCtx(
-	ctx context.Context,
-	NewStartPort uint16,
-	NewEndPort uint16,
-	NewProtocol string,
-	NewManage bool,
-) (err error) {
-	// Request structure.
-	request := &struct {
-		NewStartPort string
-		NewEndPort   string
-		NewProtocol  string
-		NewManage    string
-	}{}
-	// BEGIN Marshal arguments into request.
-
-	if request.NewStartPort, err = soap.MarshalUi2(NewStartPort); err != nil {
-		return
-	}
-	if request.NewEndPort, err = soap.MarshalUi2(NewEndPort); err != nil {
-		return
-	}
-	if request.NewProtocol, err = soap.MarshalString(NewProtocol); err != nil {
-		return
-	}
-	if request.NewManage, err = soap.MarshalBoolean(NewManage); err != nil {
-		return
-	}
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := interface{}(nil)
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "DeletePortMappingRange", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	// END Unmarshal arguments from response.
-	return
-}
-
-// DeletePortMappingRange is the legacy version of DeletePortMappingRangeCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) DeletePortMappingRange(NewStartPort uint16, NewEndPort uint16, NewProtocol string, NewManage bool) (err error) {
-	return client.DeletePortMappingRangeCtx(context.Background(),
-		NewStartPort,
-		NewEndPort,
-		NewProtocol,
-		NewManage,
-	)
-}
-
-func (client *WANIPConnection2) ForceTerminationCtx(
-	ctx context.Context,
-) (err error) {
-	// Request structure.
-	request := interface{}(nil)
-	// BEGIN Marshal arguments into request.
-
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := interface{}(nil)
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "ForceTermination", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	// END Unmarshal arguments from response.
-	return
-}
-
-// ForceTermination is the legacy version of ForceTerminationCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) ForceTermination() (err error) {
-	return client.ForceTerminationCtx(context.Background())
-}
-
-func (client *WANIPConnection2) GetAutoDisconnectTimeCtx(
-	ctx context.Context,
-) (NewAutoDisconnectTime uint32, err error) {
-	// Request structure.
-	request := interface{}(nil)
-	// BEGIN Marshal arguments into request.
-
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := &struct {
-		NewAutoDisconnectTime string
-	}{}
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "GetAutoDisconnectTime", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	if NewAutoDisconnectTime, err = soap.UnmarshalUi4(response.NewAutoDisconnectTime); err != nil {
-		return
-	}
-	// END Unmarshal arguments from response.
-	return
-}
-
-// GetAutoDisconnectTime is the legacy version of GetAutoDisconnectTimeCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) GetAutoDisconnectTime() (NewAutoDisconnectTime uint32, err error) {
-	return client.GetAutoDisconnectTimeCtx(context.Background())
-}
-
-//
-// Return values:
-//
-// * NewConnectionType: allowed values: Unconfigured, IP_Routed, IP_Bridged
-func (client *WANIPConnection2) GetConnectionTypeInfoCtx(
-	ctx context.Context,
-) (NewConnectionType string, NewPossibleConnectionTypes string, err error) {
-	// Request structure.
-	request := interface{}(nil)
-	// BEGIN Marshal arguments into request.
-
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := &struct {
-		NewConnectionType          string
-		NewPossibleConnectionTypes string
-	}{}
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "GetConnectionTypeInfo", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	if NewConnectionType, err = soap.UnmarshalString(response.NewConnectionType); err != nil {
-		return
-	}
-	if NewPossibleConnectionTypes, err = soap.UnmarshalString(response.NewPossibleConnectionTypes); err != nil {
-		return
-	}
-	// END Unmarshal arguments from response.
-	return
-}
-
-// GetConnectionTypeInfo is the legacy version of GetConnectionTypeInfoCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) GetConnectionTypeInfo() (NewConnectionType string, NewPossibleConnectionTypes string, err error) {
-	return client.GetConnectionTypeInfoCtx(context.Background())
-}
-
-func (client *WANIPConnection2) GetExternalIPAddressCtx(
-	ctx context.Context,
-) (NewExternalIPAddress string, err error) {
-	// Request structure.
-	request := interface{}(nil)
-	// BEGIN Marshal arguments into request.
-
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := &struct {
-		NewExternalIPAddress string
-	}{}
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "GetExternalIPAddress", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	if NewExternalIPAddress, err = soap.UnmarshalString(response.NewExternalIPAddress); err != nil {
-		return
-	}
-	// END Unmarshal arguments from response.
-	return
-}
-
-// GetExternalIPAddress is the legacy version of GetExternalIPAddressCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) GetExternalIPAddress() (NewExternalIPAddress string, err error) {
-	return client.GetExternalIPAddressCtx(context.Background())
-}
-
-//
-// Return values:
-//
-// * NewProtocol: allowed values: TCP, UDP
-//
-// * NewInternalPort: allowed value range: minimum=1, maximum=65535
-//
-// * NewLeaseDuration: allowed value range: minimum=0, maximum=604800
-func (client *WANIPConnection2) GetGenericPortMappingEntryCtx(
-	ctx context.Context,
-	NewPortMappingIndex uint16,
-) (NewRemoteHost string, NewExternalPort uint16, NewProtocol string, NewInternalPort uint16, NewInternalClient string, NewEnabled bool, NewPortMappingDescription string, NewLeaseDuration uint32, err error) {
-	// Request structure.
-	request := &struct {
-		NewPortMappingIndex string
-	}{}
-	// BEGIN Marshal arguments into request.
-
-	if request.NewPortMappingIndex, err = soap.MarshalUi2(NewPortMappingIndex); err != nil {
-		return
-	}
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := &struct {
-		NewRemoteHost             string
-		NewExternalPort           string
-		NewProtocol               string
-		NewInternalPort           string
-		NewInternalClient         string
-		NewEnabled                string
-		NewPortMappingDescription string
-		NewLeaseDuration          string
-	}{}
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "GetGenericPortMappingEntry", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	if NewRemoteHost, err = soap.UnmarshalString(response.NewRemoteHost); err != nil {
-		return
-	}
-	if NewExternalPort, err = soap.UnmarshalUi2(response.NewExternalPort); err != nil {
-		return
-	}
-	if NewProtocol, err = soap.UnmarshalString(response.NewProtocol); err != nil {
-		return
-	}
-	if NewInternalPort, err = soap.UnmarshalUi2(response.NewInternalPort); err != nil {
-		return
-	}
-	if NewInternalClient, err = soap.UnmarshalString(response.NewInternalClient); err != nil {
-		return
-	}
-	if NewEnabled, err = soap.UnmarshalBoolean(response.NewEnabled); err != nil {
-		return
-	}
-	if NewPortMappingDescription, err = soap.UnmarshalString(response.NewPortMappingDescription); err != nil {
-		return
-	}
-	if NewLeaseDuration, err = soap.UnmarshalUi4(response.NewLeaseDuration); err != nil {
-		return
-	}
-	// END Unmarshal arguments from response.
-	return
-}
-
-// GetGenericPortMappingEntry is the legacy version of GetGenericPortMappingEntryCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) GetGenericPortMappingEntry(NewPortMappingIndex uint16) (NewRemoteHost string, NewExternalPort uint16, NewProtocol string, NewInternalPort uint16, NewInternalClient string, NewEnabled bool, NewPortMappingDescription string, NewLeaseDuration uint32, err error) {
-	return client.GetGenericPortMappingEntryCtx(context.Background(),
-		NewPortMappingIndex,
-	)
-}
-
-func (client *WANIPConnection2) GetIdleDisconnectTimeCtx(
-	ctx context.Context,
-) (NewIdleDisconnectTime uint32, err error) {
-	// Request structure.
-	request := interface{}(nil)
-	// BEGIN Marshal arguments into request.
-
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := &struct {
-		NewIdleDisconnectTime string
-	}{}
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "GetIdleDisconnectTime", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	if NewIdleDisconnectTime, err = soap.UnmarshalUi4(response.NewIdleDisconnectTime); err != nil {
-		return
-	}
-	// END Unmarshal arguments from response.
-	return
-}
-
-// GetIdleDisconnectTime is the legacy version of GetIdleDisconnectTimeCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) GetIdleDisconnectTime() (NewIdleDisconnectTime uint32, err error) {
-	return client.GetIdleDisconnectTimeCtx(context.Background())
-}
-
-//
-// Arguments:
-//
-// * NewProtocol: allowed values: TCP, UDP
-
-func (client *WANIPConnection2) GetListOfPortMappingsCtx(
-	ctx context.Context,
-	NewStartPort uint16,
-	NewEndPort uint16,
-	NewProtocol string,
-	NewManage bool,
-	NewNumberOfPorts uint16,
-) (NewPortListing string, err error) {
-	// Request structure.
-	request := &struct {
-		NewStartPort     string
-		NewEndPort       string
-		NewProtocol      string
-		NewManage        string
-		NewNumberOfPorts string
-	}{}
-	// BEGIN Marshal arguments into request.
-
-	if request.NewStartPort, err = soap.MarshalUi2(NewStartPort); err != nil {
-		return
-	}
-	if request.NewEndPort, err = soap.MarshalUi2(NewEndPort); err != nil {
-		return
-	}
-	if request.NewProtocol, err = soap.MarshalString(NewProtocol); err != nil {
-		return
-	}
-	if request.NewManage, err = soap.MarshalBoolean(NewManage); err != nil {
-		return
-	}
-	if request.NewNumberOfPorts, err = soap.MarshalUi2(NewNumberOfPorts); err != nil {
-		return
-	}
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := &struct {
-		NewPortListing string
-	}{}
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "GetListOfPortMappings", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	if NewPortListing, err = soap.UnmarshalString(response.NewPortListing); err != nil {
-		return
-	}
-	// END Unmarshal arguments from response.
-	return
-}
-
-// GetListOfPortMappings is the legacy version of GetListOfPortMappingsCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) GetListOfPortMappings(NewStartPort uint16, NewEndPort uint16, NewProtocol string, NewManage bool, NewNumberOfPorts uint16) (NewPortListing string, err error) {
-	return client.GetListOfPortMappingsCtx(context.Background(),
-		NewStartPort,
-		NewEndPort,
-		NewProtocol,
-		NewManage,
-		NewNumberOfPorts,
-	)
-}
-
-func (client *WANIPConnection2) GetNATRSIPStatusCtx(
-	ctx context.Context,
-) (NewRSIPAvailable bool, NewNATEnabled bool, err error) {
-	// Request structure.
-	request := interface{}(nil)
-	// BEGIN Marshal arguments into request.
-
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := &struct {
-		NewRSIPAvailable string
-		NewNATEnabled    string
-	}{}
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "GetNATRSIPStatus", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	if NewRSIPAvailable, err = soap.UnmarshalBoolean(response.NewRSIPAvailable); err != nil {
-		return
-	}
-	if NewNATEnabled, err = soap.UnmarshalBoolean(response.NewNATEnabled); err != nil {
-		return
-	}
-	// END Unmarshal arguments from response.
-	return
-}
-
-// GetNATRSIPStatus is the legacy version of GetNATRSIPStatusCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) GetNATRSIPStatus() (NewRSIPAvailable bool, NewNATEnabled bool, err error) {
-	return client.GetNATRSIPStatusCtx(context.Background())
-}
-
-//
-// Arguments:
-//
-// * NewProtocol: allowed values: TCP, UDP
-
-//
-// Return values:
-//
-// * NewInternalPort: allowed value range: minimum=1, maximum=65535
-//
-// * NewLeaseDuration: allowed value range: minimum=0, maximum=604800
-func (client *WANIPConnection2) GetSpecificPortMappingEntryCtx(
-	ctx context.Context,
-	NewRemoteHost string,
-	NewExternalPort uint16,
-	NewProtocol string,
-) (NewInternalPort uint16, NewInternalClient string, NewEnabled bool, NewPortMappingDescription string, NewLeaseDuration uint32, err error) {
-	// Request structure.
-	request := &struct {
-		NewRemoteHost   string
-		NewExternalPort string
-		NewProtocol     string
-	}{}
-	// BEGIN Marshal arguments into request.
-
-	if request.NewRemoteHost, err = soap.MarshalString(NewRemoteHost); err != nil {
-		return
-	}
-	if request.NewExternalPort, err = soap.MarshalUi2(NewExternalPort); err != nil {
-		return
-	}
-	if request.NewProtocol, err = soap.MarshalString(NewProtocol); err != nil {
-		return
-	}
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := &struct {
-		NewInternalPort           string
-		NewInternalClient         string
-		NewEnabled                string
-		NewPortMappingDescription string
-		NewLeaseDuration          string
-	}{}
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "GetSpecificPortMappingEntry", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	if NewInternalPort, err = soap.UnmarshalUi2(response.NewInternalPort); err != nil {
-		return
-	}
-	if NewInternalClient, err = soap.UnmarshalString(response.NewInternalClient); err != nil {
-		return
-	}
-	if NewEnabled, err = soap.UnmarshalBoolean(response.NewEnabled); err != nil {
-		return
-	}
-	if NewPortMappingDescription, err = soap.UnmarshalString(response.NewPortMappingDescription); err != nil {
-		return
-	}
-	if NewLeaseDuration, err = soap.UnmarshalUi4(response.NewLeaseDuration); err != nil {
-		return
-	}
-	// END Unmarshal arguments from response.
-	return
-}
-
-// GetSpecificPortMappingEntry is the legacy version of GetSpecificPortMappingEntryCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) GetSpecificPortMappingEntry(NewRemoteHost string, NewExternalPort uint16, NewProtocol string) (NewInternalPort uint16, NewInternalClient string, NewEnabled bool, NewPortMappingDescription string, NewLeaseDuration uint32, err error) {
-	return client.GetSpecificPortMappingEntryCtx(context.Background(),
-		NewRemoteHost,
-		NewExternalPort,
-		NewProtocol,
-	)
-}
-
-//
-// Return values:
-//
-// * NewConnectionStatus: allowed values: Unconfigured, Connected, Disconnected
-//
-// * NewLastConnectionError: allowed values: ERROR_NONE
-func (client *WANIPConnection2) GetStatusInfoCtx(
-	ctx context.Context,
-) (NewConnectionStatus string, NewLastConnectionError string, NewUptime uint32, err error) {
-	// Request structure.
-	request := interface{}(nil)
-	// BEGIN Marshal arguments into request.
-
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := &struct {
-		NewConnectionStatus    string
-		NewLastConnectionError string
-		NewUptime              string
-	}{}
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "GetStatusInfo", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	if NewConnectionStatus, err = soap.UnmarshalString(response.NewConnectionStatus); err != nil {
-		return
-	}
-	if NewLastConnectionError, err = soap.UnmarshalString(response.NewLastConnectionError); err != nil {
-		return
-	}
-	if NewUptime, err = soap.UnmarshalUi4(response.NewUptime); err != nil {
-		return
-	}
-	// END Unmarshal arguments from response.
-	return
-}
-
-// GetStatusInfo is the legacy version of GetStatusInfoCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) GetStatusInfo() (NewConnectionStatus string, NewLastConnectionError string, NewUptime uint32, err error) {
-	return client.GetStatusInfoCtx(context.Background())
-}
-
-func (client *WANIPConnection2) GetWarnDisconnectDelayCtx(
-	ctx context.Context,
-) (NewWarnDisconnectDelay uint32, err error) {
-	// Request structure.
-	request := interface{}(nil)
-	// BEGIN Marshal arguments into request.
-
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := &struct {
-		NewWarnDisconnectDelay string
-	}{}
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "GetWarnDisconnectDelay", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	if NewWarnDisconnectDelay, err = soap.UnmarshalUi4(response.NewWarnDisconnectDelay); err != nil {
-		return
-	}
-	// END Unmarshal arguments from response.
-	return
-}
-
-// GetWarnDisconnectDelay is the legacy version of GetWarnDisconnectDelayCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) GetWarnDisconnectDelay() (NewWarnDisconnectDelay uint32, err error) {
-	return client.GetWarnDisconnectDelayCtx(context.Background())
-}
-
-func (client *WANIPConnection2) RequestConnectionCtx(
-	ctx context.Context,
-) (err error) {
-	// Request structure.
-	request := interface{}(nil)
-	// BEGIN Marshal arguments into request.
-
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := interface{}(nil)
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "RequestConnection", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	// END Unmarshal arguments from response.
-	return
-}
-
-// RequestConnection is the legacy version of RequestConnectionCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) RequestConnection() (err error) {
-	return client.RequestConnectionCtx(context.Background())
-}
-
-func (client *WANIPConnection2) RequestTerminationCtx(
-	ctx context.Context,
-) (err error) {
-	// Request structure.
-	request := interface{}(nil)
-	// BEGIN Marshal arguments into request.
-
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := interface{}(nil)
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "RequestTermination", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	// END Unmarshal arguments from response.
-	return
-}
-
-// RequestTermination is the legacy version of RequestTerminationCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) RequestTermination() (err error) {
-	return client.RequestTerminationCtx(context.Background())
-}
-
-func (client *WANIPConnection2) SetAutoDisconnectTimeCtx(
-	ctx context.Context,
-	NewAutoDisconnectTime uint32,
-) (err error) {
-	// Request structure.
-	request := &struct {
-		NewAutoDisconnectTime string
-	}{}
-	// BEGIN Marshal arguments into request.
-
-	if request.NewAutoDisconnectTime, err = soap.MarshalUi4(NewAutoDisconnectTime); err != nil {
-		return
-	}
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := interface{}(nil)
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "SetAutoDisconnectTime", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	// END Unmarshal arguments from response.
-	return
-}
-
-// SetAutoDisconnectTime is the legacy version of SetAutoDisconnectTimeCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) SetAutoDisconnectTime(NewAutoDisconnectTime uint32) (err error) {
-	return client.SetAutoDisconnectTimeCtx(context.Background(),
-		NewAutoDisconnectTime,
-	)
-}
-
-//
-// Arguments:
-//
-// * NewConnectionType: allowed values: Unconfigured, IP_Routed, IP_Bridged
-
-func (client *WANIPConnection2) SetConnectionTypeCtx(
-	ctx context.Context,
-	NewConnectionType string,
-) (err error) {
-	// Request structure.
-	request := &struct {
-		NewConnectionType string
-	}{}
-	// BEGIN Marshal arguments into request.
-
-	if request.NewConnectionType, err = soap.MarshalString(NewConnectionType); err != nil {
-		return
-	}
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := interface{}(nil)
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "SetConnectionType", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	// END Unmarshal arguments from response.
-	return
-}
-
-// SetConnectionType is the legacy version of SetConnectionTypeCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) SetConnectionType(NewConnectionType string) (err error) {
-	return client.SetConnectionTypeCtx(context.Background(),
-		NewConnectionType,
-	)
-}
-
-func (client *WANIPConnection2) SetIdleDisconnectTimeCtx(
-	ctx context.Context,
-	NewIdleDisconnectTime uint32,
-) (err error) {
-	// Request structure.
-	request := &struct {
-		NewIdleDisconnectTime string
-	}{}
-	// BEGIN Marshal arguments into request.
-
-	if request.NewIdleDisconnectTime, err = soap.MarshalUi4(NewIdleDisconnectTime); err != nil {
-		return
-	}
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := interface{}(nil)
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "SetIdleDisconnectTime", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	// END Unmarshal arguments from response.
-	return
-}
-
-// SetIdleDisconnectTime is the legacy version of SetIdleDisconnectTimeCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) SetIdleDisconnectTime(NewIdleDisconnectTime uint32) (err error) {
-	return client.SetIdleDisconnectTimeCtx(context.Background(),
-		NewIdleDisconnectTime,
-	)
-}
-
-func (client *WANIPConnection2) SetWarnDisconnectDelayCtx(
-	ctx context.Context,
-	NewWarnDisconnectDelay uint32,
-) (err error) {
-	// Request structure.
-	request := &struct {
-		NewWarnDisconnectDelay string
-	}{}
-	// BEGIN Marshal arguments into request.
-
-	if request.NewWarnDisconnectDelay, err = soap.MarshalUi4(NewWarnDisconnectDelay); err != nil {
-		return
-	}
-	// END Marshal arguments into request.
-
-	// Response structure.
-	response := interface{}(nil)
-
-	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformActionCtx(ctx, URN_WANIPConnection_2, "SetWarnDisconnectDelay", request, response); err != nil {
-		return
-	}
-
-	// BEGIN Unmarshal arguments from response.
-
-	// END Unmarshal arguments from response.
-	return
-}
-
-// SetWarnDisconnectDelay is the legacy version of SetWarnDisconnectDelayCtx, but uses
-// context.Background() as the context.
-func (client *WANIPConnection2) SetWarnDisconnectDelay(NewWarnDisconnectDelay uint32) (err error) {
 	return client.SetWarnDisconnectDelayCtx(context.Background(),
 		NewWarnDisconnectDelay,
 	)

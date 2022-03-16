@@ -31,7 +31,7 @@ func newDCP(metadata DCPMetadata) *DCP {
 }
 
 func (dcp *DCP) Reset() {
-	dcp.DocURLs = dcp.DocURLs[:0]
+	dcp.DocURLs = nil
 	dcp.DeviceTypes = make(map[string]*URNParts)
 	dcp.ServiceTypes = make(map[string]*URNParts)
 }

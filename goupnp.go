@@ -65,7 +65,7 @@ type MaybeRootDevice struct {
 	Location *url.URL
 
 	// The address from which the device was discovered (if known - otherwise empty string).
-	localAddr string
+	LocalAddr string
 
 	// Any error encountered probing a discovered device.
 	Err error
@@ -103,7 +103,7 @@ func DiscoverDevices(searchTarget string) ([]MaybeRootDevice, error) {
 		} else {
 			maybe.Root = root
 		}
-		maybe.localAddr = response.Header.Get(httpu.LocalAddressHeader)
+		maybe.LocalAddr = response.Header.Get(httpu.LocalAddressHeader)
 	}
 
 	return results, nil

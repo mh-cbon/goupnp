@@ -5,6 +5,7 @@
 // - standardizeddcps/Internet Gateway_2/UPnP-gw-WANConnectionDevice-v2-Device-20100910.pdf
 // - standardizeddcps/Internet Gateway_2/UPnP-gw-WANDevice-v2-Device-20100910.pdf
 // - standardizeddcps/Internet Gateway_2/UPnP-gw-WANIPConnection-v2-Service-20100910.pdf
+// - standardizeddcps/Internet Gateway_2/UPnP-gw-WANIPv6FirewallControl-v1-Service-20101210.pdf
 //
 // Typically, use one of the New* functions to create clients for services.
 package internetgateway2

@@ -4,8 +4,6 @@ import (
 	"archive/zip"
 	"fmt"
 	"path/filepath"
-
-	"github.com/hashicorp/go-multierror"
 )
 
 type dcpProvider interface {
@@ -93,23 +91,4 @@ func (o openconnectivitydotorg) process(tmpdir, name string, dcp *DCP) error {
 		dcp.DocURLs = append(dcp.DocURLs, d.Name)
 	}
 	return nil
-}
-
-type multiProvider []dcpProvider
-
-func (m multiProvider) process(tmpdir, name string, dcp *DCP) (err error) {
-	var f int
-	for _, p := range m {
-		if e := p.process(tmpdir, name, dcp); e != nil {
-			f++
-			dcp.Reset()
-			err = multierror.Append(err, fmt.Errorf("%T: %v", p, e))
-			continue
-		}
-		break
-	}
-	if f < len(m) {
-		return nil
-	}
-	return
 }

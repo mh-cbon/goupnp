@@ -13,62 +13,44 @@ var dcpMetadata = []DCPMetadata{
 	{
 		Name:         "internetgateway1",
 		OfficialName: "Internet Gateway Device v1",
-		Src: multiProvider{
-			// upnpdotorg{
-			// 	DocURL:     "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v1-Device.pdf",
-			// 	XMLSpecURL: "http://upnp.org/specs/gw/UPnP-gw-IGD-TestFiles-20010921.zip",
-			// 	Hacks:      []DCPHackFn{totalBytesHack},
-			// },
-			openconnectivitydotorg{
-				SpecsURL:       allSpecsURL,
-				DocPath:        "*/*/UPnP-gw-*v1*.pdf",
-				XMLSpecZipPath: "*/*/UPnP-gw-IGD-TestFiles-*.zip",
-				XMLServicePath: []string{"*/service/*1.xml", "*/service/WANIPConnection2.xml"},
-				XMLDevicePath:  []string{"*/device/*1.xml", "*/device/WANConnectionDevice2.xml", "*/device/WANDevice2.xml"},
-				Hacks:          []DCPHackFn{fixMissingURN, totalBytesHack},
-			},
+		Src: openconnectivitydotorg{
+			SpecsURL:       allSpecsURL,
+			DocPath:        "*/DeviceProtection_1/UPnP-gw-*v1*.pdf",
+			XMLSpecZipPath: "*/DeviceProtection_1/UPnP-gw-IGD-TestFiles-*.zip",
+			XMLServicePath: []string{"*/service/*1.xml"},
+			XMLDevicePath:  []string{"*/device/*1.xml"},
+			Hacks:          []DCPHackFn{fixMissingURN, totalBytesHack},
 		},
 	},
 	{
 		Name:         "internetgateway2",
 		OfficialName: "Internet Gateway Device v2",
-		Src: multiProvider{
-			// upnpdotorg{
-			// 	DocURL:     "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v2-Device.pdf",
-			// 	XMLSpecURL: "http://upnp.org/specs/gw/UPnP-gw-IGD-Testfiles-20110224.zip",
-			// 	Hacks: []DCPHackFn{fixMissingURN, totalBytesHack},
-			// },
-			openconnectivitydotorg{
-				SpecsURL:       allSpecsURL,
-				DocPath:        "*/*/UPnP-gw-*v2*.pdf",
-				XMLSpecZipPath: "*/*/UPnP-gw-IGD-TestFiles-*.zip",
-				XMLServicePath: []string{"*/service/*1.xml", "*/service/*2.xml"},
-				XMLDevicePath:  []string{"*/device/*1.xml", "*/device/*2.xml"},
-				Hacks:          []DCPHackFn{fixMissingURN, totalBytesHack},
-			},
+		Src: openconnectivitydotorg{
+			SpecsURL:       allSpecsURL,
+			DocPath:        "*/Internet Gateway_2/UPnP-gw-*.pdf",
+			XMLSpecZipPath: "*/Internet Gateway_2/UPnP-gw-IGD-TestFiles-*.zip",
+			XMLServicePath: []string{"*/service/*1.xml", "*/service/*2.xml"},
+			XMLDevicePath:  []string{"*/device/*1.xml", "*/device/*2.xml"},
+			Hacks:          []DCPHackFn{fixMissingURN, totalBytesHack},
 		},
 	},
 	{
 		Name:         "av1",
 		OfficialName: "MediaServer v1 and MediaRenderer v1",
-		Src: multiProvider{
-			upnpdotorg{
-				DocURL:     "http://upnp.org/specs/av/av1/",
-				XMLSpecURL: "http://upnp.org/specs/av/UPnP-av-TestFiles-20070927.zip",
-			},
+		Src: upnpdotorg{
+			DocURL:     "http://upnp.org/specs/av/av1/",
+			XMLSpecURL: "http://upnp.org/specs/av/UPnP-av-TestFiles-20070927.zip",
 		},
 	},
 	{
 		Name:         "av3",
 		OfficialName: "MediaServer v3 and MediaRenderer v4",
-		Src: multiProvider{
-			openconnectivitydotorg{
-				SpecsURL:       allSpecsURL,
-				DocPath:        "*/*/UPnP-av-*v{3,4}*.pdf",
-				XMLSpecZipPath: "*/*/UPnP-av-TestFiles-*.zip",
-				XMLServicePath: []string{"*/*/service/*3.xml", "*/*/service/*4.xml"},
-				XMLDevicePath:  []string{"*/*/device/*3.xml", "*/*/device/*4.xml"},
-			},
+		Src: openconnectivitydotorg{
+			SpecsURL:       allSpecsURL,
+			DocPath:        "standardizeddcps/MediaServer_4 and  MediaRenderer_3/UPnP-av-*v{3,4}*.pdf",
+			XMLSpecZipPath: "standardizeddcps/MediaServer_4 and  MediaRenderer_3/UPnP-av-TestFiles-*.zip",
+			XMLServicePath: []string{"*/*/service/*3.xml", "*/*/service/*4.xml"},
+			XMLDevicePath:  []string{"*/*/device/*3.xml", "*/*/device/*4.xml"},
 		},
 	},
 }

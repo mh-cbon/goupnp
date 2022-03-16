@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"strings"
 )
 
 func acquireFile(specFilename string, xmlSpecURL string) error {
@@ -55,8 +56,9 @@ func downloadFile(filename, url string) error {
 
 func globFiles(pattern string, archive []*zip.File) []*zip.File {
 	var files []*zip.File
+	pattern = strings.ToLower(pattern)
 	for _, f := range archive {
-		if matched, err := path.Match(pattern, f.Name); err != nil {
+		if matched, err := path.Match(pattern, strings.ToLower(f.Name)); err != nil {
 			// This shouldn't happen - all patterns are hard-coded, errors in them
 			// are a programming error.
 			panic(err)

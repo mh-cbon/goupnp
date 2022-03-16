@@ -37,7 +37,12 @@ func NewServiceClients(searchTarget string) (clients []ServiceClient, errors []e
 			continue
 		}
 
-		deviceClients, err := newServiceClientsFromRootDevice(maybeRootDevice.Root, maybeRootDevice.Location, searchTarget, maybeRootDevice.localAddr)
+		deviceClients, err := newServiceClientsFromRootDevice(
+			maybeRootDevice.Root,
+			maybeRootDevice.Location,
+			searchTarget,
+			maybeRootDevice.LocalAddr,
+		)
 		if err != nil {
 			errors = append(errors, err)
 			continue
