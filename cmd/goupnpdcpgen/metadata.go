@@ -1,6 +1,8 @@
 package main
 
-import "strings"
+import (
+	"strings"
+)
 
 // DCP contains extra metadata to use when generating DCP source files.
 type DCPMetadata struct {
@@ -13,25 +15,24 @@ var dcpMetadata = []DCPMetadata{
 	{
 		Name:         "internetgateway1",
 		OfficialName: "Internet Gateway Device v1",
-		Src: openconnectivitydotorg{
-			SpecsURL:       allSpecsURL,
-			DocPath:        "*/DeviceProtection_1/UPnP-gw-*v1*.pdf",
-			XMLSpecZipPath: "*/DeviceProtection_1/UPnP-gw-IGD-TestFiles-*.zip",
-			XMLServicePath: []string{"*/service/*1.xml"},
-			XMLDevicePath:  []string{"*/device/*1.xml"},
-			Hacks:          []DCPHackFn{fixMissingURN, totalBytesHack},
+		Src: upnpdotorg{
+			DocURL:     "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v1-Device.pdf",
+			XMLSpecURL: "http://upnp.org/specs/gw/UPnP-gw-IGD-TestFiles-20010921.zip",
+			Hacks: []DCPHackFn{
+				totalBytesHack("urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"),
+			},
 		},
 	},
 	{
 		Name:         "internetgateway2",
 		OfficialName: "Internet Gateway Device v2",
-		Src: openconnectivitydotorg{
-			SpecsURL:       allSpecsURL,
-			DocPath:        "*/Internet Gateway_2/UPnP-gw-*.pdf",
-			XMLSpecZipPath: "*/Internet Gateway_2/UPnP-gw-IGD-TestFiles-*.zip",
-			XMLServicePath: []string{"*/service/*1.xml", "*/service/*2.xml"},
-			XMLDevicePath:  []string{"*/device/*1.xml", "*/device/*2.xml"},
-			Hacks:          []DCPHackFn{fixMissingURN, totalBytesHack},
+		Src: upnpdotorg{
+			DocURL:     "http://upnp.org/specs/gw/UPnP-gw-InternetGatewayDevice-v2-Device.pdf",
+			XMLSpecURL: "http://upnp.org/specs/gw/UPnP-gw-IGD-Testfiles-20110224.zip",
+			Hacks: []DCPHackFn{
+				fixMissingURN("urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"),
+				totalBytesHack("urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"),
+			},
 		},
 	},
 	{
@@ -43,49 +44,73 @@ var dcpMetadata = []DCPMetadata{
 		},
 	},
 	{
-		Name:         "av3",
-		OfficialName: "MediaServer v3 and MediaRenderer v4",
+		Name:         "ocf/internetgateway1",
+		OfficialName: "Internet Gateway Device v1 - Open Connectivity Foundation",
 		Src: openconnectivitydotorg{
 			SpecsURL:       allSpecsURL,
-			DocPath:        "standardizeddcps/MediaServer_4 and  MediaRenderer_3/UPnP-av-*v{3,4}*.pdf",
-			XMLSpecZipPath: "standardizeddcps/MediaServer_4 and  MediaRenderer_3/UPnP-av-TestFiles-*.zip",
-			XMLServicePath: []string{"*/*/service/*3.xml", "*/*/service/*4.xml"},
-			XMLDevicePath:  []string{"*/*/device/*3.xml", "*/*/device/*4.xml"},
+			DocPath:        "*/DeviceProtection_1/UPnP-gw-*v1*.pdf",
+			XMLSpecZipPath: "*/DeviceProtection_1/UPnP-gw-IGD-TestFiles-*.zip",
+			XMLServicePath: []string{"*/service/*1.xml"},
+			XMLDevicePath:  []string{"*/device/*1.xml"},
+			Hacks: []DCPHackFn{
+				fixMissingURN("urn:schemas-upnp-org:service:DeviceProtection:1"),
+				fixMissingURN("urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"),
+				totalBytesHack(""),
+			},
+		},
+	},
+	{
+		Name:         "ocf/internetgateway2",
+		OfficialName: "Internet Gateway Device v2 - Open Connectivity Foundation",
+		Src: openconnectivitydotorg{
+			SpecsURL:       allSpecsURL,
+			DocPath:        "*/Internet Gateway_2/UPnP-gw-*.pdf",
+			XMLSpecZipPath: "*/Internet Gateway_2/UPnP-gw-IGD-TestFiles-*.zip",
+			XMLServicePath: []string{"*/service/*1.xml", "*/service/*2.xml"},
+			XMLDevicePath:  []string{"*/device/*1.xml", "*/device/*2.xml"},
+			Hacks: []DCPHackFn{
+				fixMissingURN("urn:schemas-upnp-org:service:DeviceProtection:1"),
+				totalBytesHack(""),
+			},
 		},
 	},
 }
 
-func totalBytesHack(dcp *DCP) error {
-	for _, service := range dcp.Services {
-		if service.URN == "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1" {
-			variables := service.SCPD.StateVariables
-			for key, variable := range variables {
-				varName := variable.Name
-				if strings.HasSuffix(varName, "TotalBytesSent") || strings.HasSuffix(varName, "TotalBytesReceived") {
-					// Fix size of total bytes which is by default ui4 or maximum 4 GiB.
-					variable.DataType.Name = "ui8"
-					variables[key] = variable
+func totalBytesHack(missingURN string) func(dcp *DCP) error {
+	return func(dcp *DCP) error {
+		for _, service := range dcp.Services {
+			if service.URN == missingURN || missingURN == "" {
+				variables := service.SCPD.StateVariables
+				for key, variable := range variables {
+					varName := variable.Name
+					if strings.HasSuffix(varName, "TotalBytesSent") || strings.HasSuffix(varName, "TotalBytesReceived") {
+						// Fix size of total bytes which is by default ui4 or maximum 4 GiB.
+						variable.DataType.Name = "ui8"
+						variables[key] = variable
+					}
 				}
+
+				break
 			}
-
-			break
 		}
-	}
 
-	return nil
-}
-
-func fixMissingURN(dcp *DCP) error {
-	missingURN := "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"
-	if _, ok := dcp.ServiceTypes[missingURN]; ok {
 		return nil
 	}
-	urnParts, err := extractURNParts(missingURN, serviceURNPrefix)
-	if err != nil {
-		return err
+}
+
+func fixMissingURN(missingURN string) func(dcp *DCP) error {
+	return func(dcp *DCP) error {
+		// missingURN := "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"
+		if _, ok := dcp.ServiceTypes[missingURN]; ok {
+			return nil
+		}
+		urnParts, err := extractURNParts(missingURN, serviceURNPrefix)
+		if err != nil {
+			return err
+		}
+		dcp.ServiceTypes[missingURN] = urnParts
+		return nil
 	}
-	dcp.ServiceTypes[missingURN] = urnParts
-	return nil
 }
 
 type DCPHackFn func(*DCP) error

@@ -54,10 +54,11 @@ type openconnectivitydotorg struct {
 }
 
 func (o openconnectivitydotorg) process(tmpdir, name string, dcp *DCP) error {
-	allSpecsFilename := filepath.Join(tmpdir, "openconnectivitydotorg_"+name+".zip")
+	fname := filepath.Base(name)
+	allSpecsFilename := filepath.Join(tmpdir, "openconnectivitydotorg_"+fname+".zip")
 	err := acquireFile(allSpecsFilename, o.SpecsURL)
 	if err != nil {
-		return fmt.Errorf("could not acquire specs for %s: %v", name, err)
+		return fmt.Errorf("could not acquire specs %s: %v", name, err)
 	}
 	allSpecsArchive, err := zip.OpenReader(allSpecsFilename)
 	if err != nil {

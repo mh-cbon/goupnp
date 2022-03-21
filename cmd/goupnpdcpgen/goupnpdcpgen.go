@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 var (
@@ -46,7 +47,7 @@ func run(dcpName, specsDir string, useGofmt bool) error {
 			return fmt.Errorf("could not process spec for %s: %v", metadata.Name, err)
 		}
 
-		if err := dcp.writeCode(metadata.Name+".go", useGofmt); err != nil {
+		if err := dcp.writeCode(filepath.Base(metadata.Name)+".go", useGofmt); err != nil {
 			return fmt.Errorf("error writing package %q: %v", dcp.Metadata.Name, err)
 		}
 
