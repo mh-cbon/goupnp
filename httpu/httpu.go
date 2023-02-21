@@ -31,6 +31,7 @@ type ClientInterface interface {
 type HTTPUClient struct {
 	connLock sync.Mutex // Protects use of conn.
 	conn     net.PacketConn
+	addr     string
 }
 
 var _ ClientInterface = &HTTPUClient{}
@@ -42,7 +43,8 @@ func NewHTTPUClient() (*HTTPUClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &HTTPUClient{conn: conn}, nil
+	addr := conn.LocalAddr().(*net.UDPAddr).IP.String()
+	return &HTTPUClient{conn: conn, addr: addr}, nil
 }
 
 // NewHTTPUClientAddr creates a new HTTPUClient which will broadcast packets
@@ -56,7 +58,7 @@ func NewHTTPUClientAddr(addr string) (*HTTPUClient, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &HTTPUClient{conn: conn}, nil
+	return &HTTPUClient{conn: conn, addr: addr}, nil
 }
 
 // Close shuts down the client. The client will no longer be useful following
@@ -144,9 +146,7 @@ func (httpu *HTTPUClient) Do(
 		}
 
 		// Set the related local address used to discover the device.
-		if a, ok := httpu.conn.LocalAddr().(*net.UDPAddr); ok {
-			response.Header.Add(LocalAddressHeader, a.IP.String())
-		}
+		response.Header.Add(LocalAddressHeader, httpu.addr)
 
 		responses = append(responses, response)
 	}

@@ -23,9 +23,6 @@ import (
 	"net/http"
 	"net/url"
 	"time"
-
-	"github.com/huin/goupnp/httpu"
-	"github.com/huin/goupnp/ssdp"
 )
 
 // ContextError is an error that wraps an error with some context information.
@@ -71,6 +68,9 @@ type MaybeRootDevice struct {
 
 	// Any error encountered probing a discovered device.
 	Err error
+
+	// The original search target
+	SearchTarget string
 }
 
 // DiscoverDevicesCtx attempts to find targets of the given type. This is
@@ -80,37 +80,7 @@ type MaybeRootDevice struct {
 // while attempting to send the query. An error or RootDevice is returned for
 // each discovered RootDevice.
 func DiscoverDevicesCtx(ctx context.Context, searchTarget string) ([]MaybeRootDevice, error) {
-	hc, hcCleanup, err := httpuClient()
-	if err != nil {
-		return nil, err
-	}
-	defer hcCleanup()
-	responses, err := ssdp.SSDPRawSearchCtx(ctx, hc, string(searchTarget), 2, 3)
-	if err != nil {
-		return nil, err
-	}
-
-	results := make([]MaybeRootDevice, len(responses))
-	for i, response := range responses {
-		maybe := &results[i]
-		maybe.USN = response.Header.Get("USN")
-		loc, err := response.Location()
-		if err != nil {
-			maybe.Err = ContextError{"unexpected bad location from search", err}
-			continue
-		}
-		maybe.Location = loc
-		if root, err := DeviceByURLCtx(ctx, loc); err != nil {
-			maybe.Err = err
-		} else {
-			maybe.Root = root
-		}
-		if i := response.Header.Get(httpu.LocalAddressHeader); len(i) > 0 {
-			maybe.LocalAddr = net.ParseIP(i)
-		}
-	}
-
-	return results, nil
+	return DefaultDiscoveryClient.DiscoverDevicesCtx(ctx, searchTarget)
 }
 
 // DiscoverDevices is the legacy version of DiscoverDevicesCtx, but uses

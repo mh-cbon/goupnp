@@ -109,6 +109,15 @@ func new{{$srvIdent}}ClientsFromGenericClients(genericClients []goupnp.ServiceCl
 	return clients
 }
 
+func New{{$srvIdent}}MultiClients(mutiClients goupnp.MultiServiceClient) []*{{$srvIdent}} {
+	services:= mutiClients.Filter(goupnp.ServiceType({{.Const}}))
+	clients := make([]*{{$srvIdent}}, len(services))
+	for i := range services {
+		clients[i] = &{{$srvIdent}}{services[i]}
+	}
+	return clients
+}
+
 {{range .SCPD.OrderedActions}}{{/* loops over *SCPDWithURN values */}}
 
 {{$winargs := $srv.WrapArguments .InputArguments}}

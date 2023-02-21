@@ -8,6 +8,8 @@ import (
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/huin/goupnp/httpu"
 )
 
 const (
@@ -44,7 +46,7 @@ type HTTPUClient interface {
 // a reasonable value for this.
 func SSDPRawSearchCtx(
 	ctx context.Context,
-	httpu HTTPUClient,
+	client HTTPUClient,
 	searchTarget string,
 	maxWaitSeconds int,
 	numSends int,
@@ -67,7 +69,7 @@ func SSDPRawSearchCtx(
 			"ST":   []string{searchTarget},
 		},
 	}).WithContext(ctx)
-	allResponses, err := httpu.Do(req, time.Duration(maxWaitSeconds)*time.Second+100*time.Millisecond, numSends)
+	allResponses, err := client.Do(req, time.Duration(maxWaitSeconds)*time.Second+100*time.Millisecond, numSends)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +92,8 @@ func SSDPRawSearchCtx(
 			// No usable location in search response - discard.
 			continue
 		}
-		id := loc.String() + "\x00" + usn
+		addr := response.Header.Get(httpu.LocalAddressHeader)
+		id := loc.String() + "\x00" + usn + "\x00" + addr
 		if _, alreadySeen := seenIDs[id]; !alreadySeen {
 			seenIDs[id] = true
 			responses = append(responses, response)

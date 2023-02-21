@@ -112,6 +112,15 @@ func newAVTransport1ClientsFromGenericClients(genericClients []goupnp.ServiceCli
 	return clients
 }
 
+func NewAVTransport1MultiClients(mutiClients goupnp.MultiServiceClient) []*AVTransport1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_AVTransport_1))
+	clients := make([]*AVTransport1, len(services))
+	for i := range services {
+		clients[i] = &AVTransport1{services[i]}
+	}
+	return clients
+}
+
 func (client *AVTransport1) GetCurrentTransportActionsCtx(
 	ctx context.Context,
 	InstanceID uint32,
@@ -204,7 +213,6 @@ func (client *AVTransport1) GetDeviceCapabilities(InstanceID uint32) (PlayMedia 
 	)
 }
 
-//
 // Return values:
 //
 // * NrTracks: allowed value range: minimum=0
@@ -282,7 +290,6 @@ func (client *AVTransport1) GetMediaInfo(InstanceID uint32) (NrTracks uint32, Me
 	)
 }
 
-//
 // Return values:
 //
 // * Track: allowed value range: minimum=0, step=1
@@ -356,7 +363,6 @@ func (client *AVTransport1) GetPositionInfo(InstanceID uint32) (Track uint32, Tr
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentTransportState: allowed values: STOPPED, PLAYING
@@ -414,7 +420,6 @@ func (client *AVTransport1) GetTransportInfo(InstanceID uint32) (CurrentTranspor
 	)
 }
 
-//
 // Return values:
 //
 // * PlayMode: allowed values: NORMAL
@@ -1012,6 +1017,15 @@ func newAVTransport2ClientsFromGenericClients(genericClients []goupnp.ServiceCli
 	return clients
 }
 
+func NewAVTransport2MultiClients(mutiClients goupnp.MultiServiceClient) []*AVTransport2 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_AVTransport_2))
+	clients := make([]*AVTransport2, len(services))
+	for i := range services {
+		clients[i] = &AVTransport2{services[i]}
+	}
+	return clients
+}
+
 func (client *AVTransport2) GetCurrentTransportActionsCtx(
 	ctx context.Context,
 	InstanceID uint32,
@@ -1054,7 +1068,6 @@ func (client *AVTransport2) GetCurrentTransportActions(InstanceID uint32) (Actio
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentDRMState: allowed values: OK
@@ -1150,7 +1163,6 @@ func (client *AVTransport2) GetDeviceCapabilities(InstanceID uint32) (PlayMedia 
 	)
 }
 
-//
 // Return values:
 //
 // * NrTracks: allowed value range: minimum=0
@@ -1228,7 +1240,6 @@ func (client *AVTransport2) GetMediaInfo(InstanceID uint32) (NrTracks uint32, Me
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentType: allowed values: NO_MEDIA, TRACK_AWARE, TRACK_UNAWARE
@@ -1312,7 +1323,6 @@ func (client *AVTransport2) GetMediaInfo_Ext(InstanceID uint32) (CurrentType str
 	)
 }
 
-//
 // Return values:
 //
 // * Track: allowed value range: minimum=0, step=1
@@ -1434,7 +1444,6 @@ func (client *AVTransport2) GetStateVariables(InstanceID uint32, StateVariableLi
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentTransportState: allowed values: STOPPED, PLAYING
@@ -1492,7 +1501,6 @@ func (client *AVTransport2) GetTransportInfo(InstanceID uint32) (CurrentTranspor
 	)
 }
 
-//
 // Return values:
 //
 // * PlayMode: allowed values: NORMAL
@@ -2156,6 +2164,15 @@ func newConnectionManager1ClientsFromGenericClients(genericClients []goupnp.Serv
 	return clients
 }
 
+func NewConnectionManager1MultiClients(mutiClients goupnp.MultiServiceClient) []*ConnectionManager1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_ConnectionManager_1))
+	clients := make([]*ConnectionManager1, len(services))
+	for i := range services {
+		clients[i] = &ConnectionManager1{services[i]}
+	}
+	return clients
+}
+
 func (client *ConnectionManager1) ConnectionCompleteCtx(
 	ctx context.Context,
 	ConnectionID int32,
@@ -2227,7 +2244,6 @@ func (client *ConnectionManager1) GetCurrentConnectionIDs() (ConnectionIDs strin
 	return client.GetCurrentConnectionIDsCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * Direction: allowed values: Input, Output
@@ -2482,6 +2498,15 @@ func newConnectionManager2ClientsFromGenericClients(genericClients []goupnp.Serv
 	return clients
 }
 
+func NewConnectionManager2MultiClients(mutiClients goupnp.MultiServiceClient) []*ConnectionManager2 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_ConnectionManager_2))
+	clients := make([]*ConnectionManager2, len(services))
+	for i := range services {
+		clients[i] = &ConnectionManager2{services[i]}
+	}
+	return clients
+}
+
 func (client *ConnectionManager2) ConnectionCompleteCtx(
 	ctx context.Context,
 	ConnectionID int32,
@@ -2553,7 +2578,6 @@ func (client *ConnectionManager2) GetCurrentConnectionIDs() (ConnectionIDs strin
 	return client.GetCurrentConnectionIDsCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * Direction: allowed values: Input, Output
@@ -2804,6 +2828,15 @@ func newContentDirectory1ClientsFromGenericClients(genericClients []goupnp.Servi
 	clients := make([]*ContentDirectory1, len(genericClients))
 	for i := range genericClients {
 		clients[i] = &ContentDirectory1{genericClients[i]}
+	}
+	return clients
+}
+
+func NewContentDirectory1MultiClients(mutiClients goupnp.MultiServiceClient) []*ContentDirectory1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_ContentDirectory_1))
+	clients := make([]*ContentDirectory1, len(services))
+	for i := range services {
+		clients[i] = &ContentDirectory1{services[i]}
 	}
 	return clients
 }
@@ -3221,7 +3254,6 @@ func (client *ContentDirectory1) GetSystemUpdateID() (Id uint32, err error) {
 	return client.GetSystemUpdateIDCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * TransferStatus: allowed values: COMPLETED, ERROR, IN_PROGRESS, STOPPED
@@ -3561,6 +3593,15 @@ func newContentDirectory2ClientsFromGenericClients(genericClients []goupnp.Servi
 	clients := make([]*ContentDirectory2, len(genericClients))
 	for i := range genericClients {
 		clients[i] = &ContentDirectory2{genericClients[i]}
+	}
+	return clients
+}
+
+func NewContentDirectory2MultiClients(mutiClients goupnp.MultiServiceClient) []*ContentDirectory2 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_ContentDirectory_2))
+	clients := make([]*ContentDirectory2, len(services))
+	for i := range services {
+		clients[i] = &ContentDirectory2{services[i]}
 	}
 	return clients
 }
@@ -4046,7 +4087,6 @@ func (client *ContentDirectory2) GetSystemUpdateID() (Id uint32, err error) {
 	return client.GetSystemUpdateIDCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * TransferStatus: allowed values: COMPLETED, ERROR, IN_PROGRESS, STOPPED
@@ -4434,6 +4474,15 @@ func newContentDirectory3ClientsFromGenericClients(genericClients []goupnp.Servi
 	clients := make([]*ContentDirectory3, len(genericClients))
 	for i := range genericClients {
 		clients[i] = &ContentDirectory3{genericClients[i]}
+	}
+	return clients
+}
+
+func NewContentDirectory3MultiClients(mutiClients goupnp.MultiServiceClient) []*ContentDirectory3 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_ContentDirectory_3))
+	clients := make([]*ContentDirectory3, len(services))
+	for i := range services {
+		clients[i] = &ContentDirectory3{services[i]}
 	}
 	return clients
 }
@@ -5045,7 +5094,6 @@ func (client *ContentDirectory3) GetSystemUpdateID() (Id uint32, err error) {
 	return client.GetSystemUpdateIDCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * TransferStatus: allowed values: COMPLETED, ERROR, IN_PROGRESS, STOPPED
@@ -5437,7 +5485,15 @@ func newRenderingControl1ClientsFromGenericClients(genericClients []goupnp.Servi
 	return clients
 }
 
-//
+func NewRenderingControl1MultiClients(mutiClients goupnp.MultiServiceClient) []*RenderingControl1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_RenderingControl_1))
+	clients := make([]*RenderingControl1, len(services))
+	for i := range services {
+		clients[i] = &RenderingControl1{services[i]}
+	}
+	return clients
+}
+
 // Return values:
 //
 // * CurrentBlueVideoBlackLevel: allowed value range: minimum=0, step=1
@@ -5483,7 +5539,6 @@ func (client *RenderingControl1) GetBlueVideoBlackLevel(InstanceID uint32) (Curr
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentBlueVideoGain: allowed value range: minimum=0, step=1
@@ -5529,7 +5584,6 @@ func (client *RenderingControl1) GetBlueVideoGain(InstanceID uint32) (CurrentBlu
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentBrightness: allowed value range: minimum=0, step=1
@@ -5575,7 +5629,6 @@ func (client *RenderingControl1) GetBrightness(InstanceID uint32) (CurrentBright
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentColorTemperature: allowed value range: minimum=0, step=1
@@ -5621,7 +5674,6 @@ func (client *RenderingControl1) GetColorTemperature(InstanceID uint32) (Current
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentContrast: allowed value range: minimum=0, step=1
@@ -5667,7 +5719,6 @@ func (client *RenderingControl1) GetContrast(InstanceID uint32) (CurrentContrast
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentGreenVideoBlackLevel: allowed value range: minimum=0, step=1
@@ -5713,7 +5764,6 @@ func (client *RenderingControl1) GetGreenVideoBlackLevel(InstanceID uint32) (Cur
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentGreenVideoGain: allowed value range: minimum=0, step=1
@@ -5759,7 +5809,6 @@ func (client *RenderingControl1) GetGreenVideoGain(InstanceID uint32) (CurrentGr
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentHorizontalKeystone: allowed value range: step=1
@@ -5911,7 +5960,6 @@ func (client *RenderingControl1) GetMute(InstanceID uint32, Channel string) (Cur
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentRedVideoBlackLevel: allowed value range: minimum=0, step=1
@@ -5999,7 +6047,6 @@ func (client *RenderingControl1) GetRedVideoGain(InstanceID uint32) (CurrentRedV
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentSharpness: allowed value range: minimum=0, step=1
@@ -6045,7 +6092,6 @@ func (client *RenderingControl1) GetSharpness(InstanceID uint32) (CurrentSharpne
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentVerticalKeystone: allowed value range: step=1
@@ -6096,7 +6142,6 @@ func (client *RenderingControl1) GetVerticalKeystone(InstanceID uint32) (Current
 //
 // * Channel: allowed values: Master
 
-//
 // Return values:
 //
 // * CurrentVolume: allowed value range: minimum=0, step=1
@@ -7209,7 +7254,15 @@ func newRenderingControl2ClientsFromGenericClients(genericClients []goupnp.Servi
 	return clients
 }
 
-//
+func NewRenderingControl2MultiClients(mutiClients goupnp.MultiServiceClient) []*RenderingControl2 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_RenderingControl_2))
+	clients := make([]*RenderingControl2, len(services))
+	for i := range services {
+		clients[i] = &RenderingControl2{services[i]}
+	}
+	return clients
+}
+
 // Return values:
 //
 // * CurrentBlueVideoBlackLevel: allowed value range: minimum=0, step=1
@@ -7255,7 +7308,6 @@ func (client *RenderingControl2) GetBlueVideoBlackLevel(InstanceID uint32) (Curr
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentBlueVideoGain: allowed value range: minimum=0, step=1
@@ -7301,7 +7353,6 @@ func (client *RenderingControl2) GetBlueVideoGain(InstanceID uint32) (CurrentBlu
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentBrightness: allowed value range: minimum=0, step=1
@@ -7347,7 +7398,6 @@ func (client *RenderingControl2) GetBrightness(InstanceID uint32) (CurrentBright
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentColorTemperature: allowed value range: minimum=0, step=1
@@ -7393,7 +7443,6 @@ func (client *RenderingControl2) GetColorTemperature(InstanceID uint32) (Current
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentContrast: allowed value range: minimum=0, step=1
@@ -7439,7 +7488,6 @@ func (client *RenderingControl2) GetContrast(InstanceID uint32) (CurrentContrast
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentGreenVideoBlackLevel: allowed value range: minimum=0, step=1
@@ -7485,7 +7533,6 @@ func (client *RenderingControl2) GetGreenVideoBlackLevel(InstanceID uint32) (Cur
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentGreenVideoGain: allowed value range: minimum=0, step=1
@@ -7531,7 +7578,6 @@ func (client *RenderingControl2) GetGreenVideoGain(InstanceID uint32) (CurrentGr
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentHorizontalKeystone: allowed value range: step=1
@@ -7683,7 +7729,6 @@ func (client *RenderingControl2) GetMute(InstanceID uint32, Channel string) (Cur
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentRedVideoBlackLevel: allowed value range: minimum=0, step=1
@@ -7729,7 +7774,6 @@ func (client *RenderingControl2) GetRedVideoBlackLevel(InstanceID uint32) (Curre
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentRedVideoGain: allowed value range: minimum=0, step=1
@@ -7775,7 +7819,6 @@ func (client *RenderingControl2) GetRedVideoGain(InstanceID uint32) (CurrentRedV
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentSharpness: allowed value range: minimum=0, step=1
@@ -7869,7 +7912,6 @@ func (client *RenderingControl2) GetStateVariables(InstanceID uint32, StateVaria
 	)
 }
 
-//
 // Return values:
 //
 // * CurrentVerticalKeystone: allowed value range: step=1
@@ -7920,7 +7962,6 @@ func (client *RenderingControl2) GetVerticalKeystone(InstanceID uint32) (Current
 //
 // * Channel: allowed values: Master
 
-//
 // Return values:
 //
 // * CurrentVolume: allowed value range: minimum=0, step=1
@@ -9104,6 +9145,15 @@ func newScheduledRecording1ClientsFromGenericClients(genericClients []goupnp.Ser
 	return clients
 }
 
+func NewScheduledRecording1MultiClients(mutiClients goupnp.MultiServiceClient) []*ScheduledRecording1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_ScheduledRecording_1))
+	clients := make([]*ScheduledRecording1, len(services))
+	for i := range services {
+		clients[i] = &ScheduledRecording1{services[i]}
+	}
+	return clients
+}
+
 func (client *ScheduledRecording1) BrowseRecordSchedulesCtx(
 	ctx context.Context,
 	Filter string,
@@ -9999,6 +10049,15 @@ func newScheduledRecording2ClientsFromGenericClients(genericClients []goupnp.Ser
 	clients := make([]*ScheduledRecording2, len(genericClients))
 	for i := range genericClients {
 		clients[i] = &ScheduledRecording2{genericClients[i]}
+	}
+	return clients
+}
+
+func NewScheduledRecording2MultiClients(mutiClients goupnp.MultiServiceClient) []*ScheduledRecording2 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_ScheduledRecording_2))
+	clients := make([]*ScheduledRecording2, len(services))
+	for i := range services {
+		clients[i] = &ScheduledRecording2{services[i]}
 	}
 	return clients
 }

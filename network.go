@@ -1,41 +1,8 @@
 package goupnp
 
 import (
-	"io"
 	"net"
-
-	"github.com/huin/goupnp/httpu"
 )
-
-// httpuClient creates a HTTPU client that multiplexes to all multicast-capable
-// IPv4 addresses on the host. Returns a function to clean up once the client is
-// no longer required.
-func httpuClient() (httpu.ClientInterface, func(), error) {
-	addrs, err := localIPv4MCastAddrs()
-	if err != nil {
-		return nil, nil, ctxError(err, "requesting host IPv4 addresses")
-	}
-
-	closers := make([]io.Closer, 0, len(addrs))
-	delegates := make([]httpu.ClientInterface, 0, len(addrs))
-	for _, addr := range addrs {
-		c, err := httpu.NewHTTPUClientAddr(addr)
-		if err != nil {
-			return nil, nil, ctxErrorf(err,
-				"creating HTTPU client for address %s", addr)
-		}
-		closers = append(closers, c)
-		delegates = append(delegates, c)
-	}
-
-	closer := func() {
-		for _, c := range closers {
-			c.Close()
-		}
-	}
-
-	return httpu.NewMultiClient(delegates), closer, nil
-}
 
 // localIPv2MCastAddrs returns the set of IPv4 addresses on multicast-able
 // network interfaces.

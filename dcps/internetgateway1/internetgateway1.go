@@ -114,6 +114,15 @@ func newLANHostConfigManagement1ClientsFromGenericClients(genericClients []goupn
 	return clients
 }
 
+func NewLANHostConfigManagement1MultiClients(mutiClients goupnp.MultiServiceClient) []*LANHostConfigManagement1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_LANHostConfigManagement_1))
+	clients := make([]*LANHostConfigManagement1, len(services))
+	for i := range services {
+		clients[i] = &LANHostConfigManagement1{services[i]}
+	}
+	return clients
+}
+
 func (client *LANHostConfigManagement1) DeleteDNSServerCtx(
 	ctx context.Context,
 	NewDNSServers string,
@@ -875,6 +884,15 @@ func newLayer3Forwarding1ClientsFromGenericClients(genericClients []goupnp.Servi
 	return clients
 }
 
+func NewLayer3Forwarding1MultiClients(mutiClients goupnp.MultiServiceClient) []*Layer3Forwarding1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_Layer3Forwarding_1))
+	clients := make([]*Layer3Forwarding1, len(services))
+	for i := range services {
+		clients[i] = &Layer3Forwarding1{services[i]}
+	}
+	return clients
+}
+
 func (client *Layer3Forwarding1) GetDefaultConnectionServiceCtx(
 	ctx context.Context,
 ) (NewDefaultConnectionService string, err error) {
@@ -1018,6 +1036,15 @@ func newWANCableLinkConfig1ClientsFromGenericClients(genericClients []goupnp.Ser
 	return clients
 }
 
+func NewWANCableLinkConfig1MultiClients(mutiClients goupnp.MultiServiceClient) []*WANCableLinkConfig1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_WANCableLinkConfig_1))
+	clients := make([]*WANCableLinkConfig1, len(services))
+	for i := range services {
+		clients[i] = &WANCableLinkConfig1{services[i]}
+	}
+	return clients
+}
+
 func (client *WANCableLinkConfig1) GetBPIEncryptionEnabledCtx(
 	ctx context.Context,
 ) (NewBPIEncryptionEnabled bool, err error) {
@@ -1052,7 +1079,6 @@ func (client *WANCableLinkConfig1) GetBPIEncryptionEnabled() (NewBPIEncryptionEn
 	return client.GetBPIEncryptionEnabledCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * NewCableLinkConfigState: allowed values: notReady, dsSyncComplete, usParamAcquired, rangingComplete, ipComplete, todEstablished, paramTransferComplete, registrationComplete, operational, accessDenied
@@ -1164,7 +1190,6 @@ func (client *WANCableLinkConfig1) GetDownstreamFrequency() (NewDownstreamFreque
 	return client.GetDownstreamFrequencyCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * NewDownstreamModulation: allowed values: 64QAM, 256QAM
@@ -1304,7 +1329,6 @@ func (client *WANCableLinkConfig1) GetUpstreamFrequency() (NewUpstreamFrequency 
 	return client.GetUpstreamFrequencyCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * NewUpstreamModulation: allowed values: QPSK, 16QAM
@@ -1448,6 +1472,15 @@ func newWANCommonInterfaceConfig1ClientsFromGenericClients(genericClients []goup
 	return clients
 }
 
+func NewWANCommonInterfaceConfig1MultiClients(mutiClients goupnp.MultiServiceClient) []*WANCommonInterfaceConfig1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_WANCommonInterfaceConfig_1))
+	clients := make([]*WANCommonInterfaceConfig1, len(services))
+	for i := range services {
+		clients[i] = &WANCommonInterfaceConfig1{services[i]}
+	}
+	return clients
+}
+
 func (client *WANCommonInterfaceConfig1) GetActiveConnectionCtx(
 	ctx context.Context,
 	NewActiveConnectionIndex uint16,
@@ -1494,7 +1527,6 @@ func (client *WANCommonInterfaceConfig1) GetActiveConnection(NewActiveConnection
 	)
 }
 
-//
 // Return values:
 //
 // * NewWANAccessType: allowed values: DSL, POTS, Cable, Ethernet
@@ -1580,7 +1612,6 @@ func (client *WANCommonInterfaceConfig1) GetEnabledForInternet() (NewEnabledForI
 	return client.GetEnabledForInternetCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * NewMaximumActiveConnections: allowed value range: minimum=1, step=1
@@ -1897,6 +1928,15 @@ func newWANDSLLinkConfig1ClientsFromGenericClients(genericClients []goupnp.Servi
 	return clients
 }
 
+func NewWANDSLLinkConfig1MultiClients(mutiClients goupnp.MultiServiceClient) []*WANDSLLinkConfig1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_WANDSLLinkConfig_1))
+	clients := make([]*WANDSLLinkConfig1, len(services))
+	for i := range services {
+		clients[i] = &WANDSLLinkConfig1{services[i]}
+	}
+	return clients
+}
+
 func (client *WANDSLLinkConfig1) GetATMEncapsulationCtx(
 	ctx context.Context,
 ) (NewATMEncapsulation string, err error) {
@@ -1965,7 +2005,6 @@ func (client *WANDSLLinkConfig1) GetAutoConfig() (NewAutoConfig bool, err error)
 	return client.GetAutoConfigCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * NewLinkStatus: allowed values: Up, Down
@@ -2329,7 +2368,15 @@ func newWANEthernetLinkConfig1ClientsFromGenericClients(genericClients []goupnp.
 	return clients
 }
 
-//
+func NewWANEthernetLinkConfig1MultiClients(mutiClients goupnp.MultiServiceClient) []*WANEthernetLinkConfig1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_WANEthernetLinkConfig_1))
+	clients := make([]*WANEthernetLinkConfig1, len(services))
+	for i := range services {
+		clients[i] = &WANEthernetLinkConfig1{services[i]}
+	}
+	return clients
+}
+
 // Return values:
 //
 // * NewEthernetLinkStatus: allowed values: Up, Down
@@ -2435,6 +2482,15 @@ func newWANIPConnection1ClientsFromGenericClients(genericClients []goupnp.Servic
 	clients := make([]*WANIPConnection1, len(genericClients))
 	for i := range genericClients {
 		clients[i] = &WANIPConnection1{genericClients[i]}
+	}
+	return clients
+}
+
+func NewWANIPConnection1MultiClients(mutiClients goupnp.MultiServiceClient) []*WANIPConnection1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_WANIPConnection_1))
+	clients := make([]*WANIPConnection1, len(services))
+	for i := range services {
+		clients[i] = &WANIPConnection1{services[i]}
 	}
 	return clients
 }
@@ -2640,7 +2696,6 @@ func (client *WANIPConnection1) GetAutoDisconnectTime() (NewAutoDisconnectTime u
 	return client.GetAutoDisconnectTimeCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * NewPossibleConnectionTypes: allowed values: Unconfigured, IP_Routed, IP_Bridged
@@ -2716,7 +2771,6 @@ func (client *WANIPConnection1) GetExternalIPAddress() (NewExternalIPAddress str
 	return client.GetExternalIPAddressCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * NewProtocol: allowed values: TCP, UDP
@@ -2937,7 +2991,6 @@ func (client *WANIPConnection1) GetSpecificPortMappingEntry(NewRemoteHost string
 	)
 }
 
-//
 // Return values:
 //
 // * NewConnectionStatus: allowed values: Unconfigured, Connected, Disconnected
@@ -3297,6 +3350,15 @@ func newWANPOTSLinkConfig1ClientsFromGenericClients(genericClients []goupnp.Serv
 	return clients
 }
 
+func NewWANPOTSLinkConfig1MultiClients(mutiClients goupnp.MultiServiceClient) []*WANPOTSLinkConfig1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_WANPOTSLinkConfig_1))
+	clients := make([]*WANPOTSLinkConfig1, len(services))
+	for i := range services {
+		clients[i] = &WANPOTSLinkConfig1{services[i]}
+	}
+	return clients
+}
+
 func (client *WANPOTSLinkConfig1) GetCallRetryInfoCtx(
 	ctx context.Context,
 ) (NewNumberOfRetries uint32, NewDelayBetweenRetries uint32, err error) {
@@ -3471,7 +3533,6 @@ func (client *WANPOTSLinkConfig1) GetFclass() (NewFclass string, err error) {
 	return client.GetFclassCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * NewLinkType: allowed values: PPP_Dialup
@@ -3720,6 +3781,15 @@ func newWANPPPConnection1ClientsFromGenericClients(genericClients []goupnp.Servi
 	return clients
 }
 
+func NewWANPPPConnection1MultiClients(mutiClients goupnp.MultiServiceClient) []*WANPPPConnection1 {
+	services := mutiClients.Filter(goupnp.ServiceType(URN_WANPPPConnection_1))
+	clients := make([]*WANPPPConnection1, len(services))
+	for i := range services {
+		clients[i] = &WANPPPConnection1{services[i]}
+	}
+	return clients
+}
+
 //
 // Arguments:
 //
@@ -3964,7 +4034,6 @@ func (client *WANPPPConnection1) GetAutoDisconnectTime() (NewAutoDisconnectTime 
 	return client.GetAutoDisconnectTimeCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * NewPossibleConnectionTypes: allowed values: Unconfigured, IP_Routed, DHCP_Spoofed, PPPoE_Bridged, PPTP_Relay, L2TP_Relay, PPPoE_Relay
@@ -4040,7 +4109,6 @@ func (client *WANPPPConnection1) GetExternalIPAddress() (NewExternalIPAddress st
 	return client.GetExternalIPAddressCtx(context.Background())
 }
 
-//
 // Return values:
 //
 // * NewProtocol: allowed values: TCP, UDP
@@ -4435,7 +4503,6 @@ func (client *WANPPPConnection1) GetSpecificPortMappingEntry(NewRemoteHost strin
 	)
 }
 
-//
 // Return values:
 //
 // * NewConnectionStatus: allowed values: Unconfigured, Connected, Disconnected
