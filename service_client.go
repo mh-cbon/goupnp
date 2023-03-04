@@ -19,7 +19,7 @@ type ServiceClient struct {
 	RootDevice *RootDevice
 	Location   *url.URL
 	Service    *Service
-	localAddr  net.IP
+	LAddr      net.IP
 }
 
 // NewServiceClientsCtx discovers services, and returns clients for them. err will
@@ -99,7 +99,7 @@ func newServiceClientsFromRootDevice(
 			RootDevice: rootDevice,
 			Location:   loc,
 			Service:    srv,
-			localAddr:  lAddr,
+			LAddr:      lAddr,
 		})
 	}
 	return clients, nil
@@ -114,5 +114,5 @@ func (client *ServiceClient) GetServiceClient() *ServiceClient {
 
 // LocalAddr returns the address from which the device was discovered (if known - otherwise empty).
 func (client *ServiceClient) LocalAddr() net.IP {
-	return client.localAddr
+	return client.LAddr
 }

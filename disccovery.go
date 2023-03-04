@@ -214,13 +214,13 @@ func (f ServiceClientFilter) Or(filters ...ServiceClientFilter) ServiceClientFil
 
 func ServiceLocalAddr(addr string) ServiceClientFilter {
 	return func(sc ServiceClient) bool {
-		return sc.localAddr.String() == addr
+		return sc.LAddr.String() == addr
 	}
 }
 
 func NotServiceLocalAddr(addr string) ServiceClientFilter {
 	return func(sc ServiceClient) bool {
-		return sc.localAddr.String() != addr
+		return sc.LAddr.String() != addr
 	}
 }
 

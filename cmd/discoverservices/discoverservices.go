@@ -10,6 +10,7 @@ import (
 	"github.com/huin/goupnp/dcps/internetgateway1"
 	"github.com/huin/goupnp/dcps/internetgateway2"
 	"github.com/huin/goupnp/lookup"
+	"github.com/huin/goupnp/portmapping"
 )
 
 func main() {
@@ -106,9 +107,9 @@ func run() error {
 		case lookup.AnyAddrServiceImplementation:
 			fmt.Printf("%v should port map using %v\n", x.ServiceImplementation.LocalAddr(), impl.LocalAddr())
 		}
-		fmt.Printf("%T\n", impl)
+		_, ok := impl.(portmapping.PortMapper)
+		fmt.Printf("%T PortMapper=%v\n", impl, ok)
 		printService(*impl.GetServiceClient())
-		// impl.ServiceClient.(portmapping.PortMapper).AddPortMapping()
 	}
 
 	return nil

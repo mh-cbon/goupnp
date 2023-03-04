@@ -53,7 +53,7 @@ func (s ServiceTable) ExpandAnyAddr(services goupnp.MultiServiceClient) (impls S
 		bySvcHost := goupnp.ServiceHost(svc.Location.Host)
 		bySvcType := goupnp.ServiceType(svc.Service.ServiceType)
 		for _, related := range isNotAnyAddrSvcs.Filter(bySvcHost, bySvcType) {
-			for _, v := range s.Implement(isAnyAddrSvcs.Filter(bySvcType)) {
+			for _, v := range s.Implement(isAnyAddrSvcs.Filter(bySvcHost, bySvcType)) {
 				impls = append(impls, AnyAddrServiceImplementation{
 					ServiceImplementation: v,
 					Related:               related,
